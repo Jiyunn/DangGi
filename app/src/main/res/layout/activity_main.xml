@@ -6,12 +6,11 @@
 
         <variable
             name="main"
-            type="me.jy.danggi.MainActivity"
+            type="me.jy.danggi.activities.MainActivity"
             />
     </data>
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
