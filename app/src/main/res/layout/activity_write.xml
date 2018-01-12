@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+      <variable
+          name="write"
+          type="me.jy.danggi.activities.WriteActivity"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="8dp"
+        >
+        <Button
+            android:id="@+id/btn_save"
+            android:text="@string/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:onClick="saveWrittenContent"
+            />
+
+        <EditText
+            android:id="@+id/edit_memo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:padding="2dp"
+            android:textSize="13sp"
+            android:gravity="top"
+            android:background="@drawable/border_write"
+            android:textColor="@color/colorBlack"
+            />
+
+    </LinearLayout>
+</layout>

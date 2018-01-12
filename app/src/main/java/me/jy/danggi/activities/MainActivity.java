@@ -1,5 +1,6 @@
-package me.jy.danggi;
+package me.jy.danggi.activities;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.jy.danggi.R;
 import me.jy.danggi.adapter.MemoAdapter;
 import me.jy.danggi.databinding.ActivityMainBinding;
 import me.jy.danggi.model.Memo;
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_write:
-
+                startActivity(new Intent(getApplicationContext(), WriteActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
