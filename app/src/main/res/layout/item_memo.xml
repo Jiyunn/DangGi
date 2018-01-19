@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <variable
             name="memo"
-            type="me.jy.danggi.model.Memo"/>
+            type="me.jy.danggi.model.Memo"
+            />
     </data>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="8dp"
-    >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="8dp"
+                  android:padding="8dp"
+        >
 
-    <TextView
-        android:id="@+id/text_item_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="@color/colorBlack"
-        android:text="@{memo.content}"
-        />
+        <TextView
+            android:id="@+id/text_item_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{memo.content}"
+            android:textColor="@color/colorBlack"
+            android:textSize="15sp"
 
-</LinearLayout>
+            />
+
+    </LinearLayout>
 </layout>

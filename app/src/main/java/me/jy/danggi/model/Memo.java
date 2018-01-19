@@ -7,9 +7,11 @@ package me.jy.danggi.model;
 public class Memo {
 
     private String content;
+    private String writeDate;
 
-    public Memo (String content) {
+    public Memo (String content, String writeDate) {
         this.content = content;
+        this.writeDate = writeDate;
     }
     public String getContent() {
         return content;
