@@ -1,6 +1,8 @@
 package me.jy.danggi.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import java.util.List;
 
 import me.jy.danggi.R;
 import me.jy.danggi.adapter.MemoAdapter;
+import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityMainBinding;
 import me.jy.danggi.model.Memo;
 
@@ -26,14 +29,22 @@ public class MainActivity extends AppCompatActivity {
     private MemoAdapter adapter;
     private List<Memo> dataSet;
 
+    DataHelper mDbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         dataSet = new ArrayList<>();
 
-
         initRecyclerView();
+        getMemoData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDbHelper.close();
+        super.onDestroy();
     }
 
     @Override
@@ -63,4 +74,28 @@ public class MainActivity extends AppCompatActivity {
         binding.recyclerviewMain.setAdapter(adapter);
         binding.recyclerviewMain.setLayoutManager(layoutManager);
     }
+
+    private void getMemoData() {
+        mDbHelper = new DataHelper(this);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String sortOrder =
+                DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
+
+        Cursor cursor = db.query(
+                DataHelper.DataEntry.TABLE_MEMO,
+                new String[]{DataHelper.DataEntry.COLUMN_NAME_CONTENT, DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE},
+                null,
+                null,
+                null,
+                null,
+                sortOrder);
+
+        while (cursor.moveToNext()) {
+            dataSet.add(new Memo(cursor.getString(0), cursor.getString(1)));
+        }
+        adapter.notifyDataSetChanged(); //데이터 변경 알림.
+    }
+
+
 }
+
