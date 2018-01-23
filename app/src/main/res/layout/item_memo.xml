@@ -12,8 +12,9 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:layout_marginBottom="8dp"
+                  android:layout_marginBottom="4dp"
                   android:padding="8dp"
+                  android:background="@color/colorWhite"
         >
 
         <TextView
@@ -23,8 +24,8 @@
             android:text="@{memo.content}"
             android:textColor="@color/colorBlack"
             android:textSize="15sp"
-
+            android:maxLines="1"
+            android:ellipsize="end"
             />
-
     </LinearLayout>
 </layout>
