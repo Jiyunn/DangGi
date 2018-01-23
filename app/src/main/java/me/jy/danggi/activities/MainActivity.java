@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.jy.danggi.R;
-import me.jy.danggi.adapter.MemoAdapter;
+import me.jy.danggi.activities.adapter.MemoAdapter;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityMainBinding;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.activities.model.Memo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), WriteActivity.class));
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
         }
 
     }

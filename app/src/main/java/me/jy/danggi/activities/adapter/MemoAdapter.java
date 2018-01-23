@@ -1,4 +1,4 @@
-package me.jy.danggi.adapter;
+package me.jy.danggi.activities.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import me.jy.danggi.R;
 import me.jy.danggi.databinding.ItemMemoBinding;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.activities.model.Memo;
 
 /**
  * Created by JY on 2018-01-12.
