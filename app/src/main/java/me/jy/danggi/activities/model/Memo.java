@@ -1,4 +1,4 @@
-package me.jy.danggi.model;
+package me.jy.danggi.activities.model;
 
 /**
  * Created by JY on 2018-01-12.

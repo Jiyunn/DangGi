@@ -2,4 +2,6 @@
     <string name="app_name">Danggi</string>
 
     <string name="save">저장하기</string>
+    <string name="click">클릭해주세요</string>
+    <string name="widget_label">Danggi (당신의  기록)</string>
 </resources>

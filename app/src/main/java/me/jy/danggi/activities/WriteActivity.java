@@ -17,10 +17,18 @@ public class WriteActivity extends Activity {
 
     ActivityWriteBinding binding;
 
+    DataHelper mDbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDbHelper.close();
+        super.onDestroy();
     }
 
     public void saveWrittenContent(View v) {
@@ -30,7 +38,7 @@ public class WriteActivity extends Activity {
 
     private boolean saveMemo() {
        try {
-           DataHelper mDbHelper = new DataHelper(this);
+           mDbHelper = new DataHelper(this);
            SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
            ContentValues values = new ContentValues();

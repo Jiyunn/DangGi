@@ -5,7 +5,7 @@
 
         <variable
             name="memo"
-            type="me.jy.danggi.model.Memo"
+            type="me.jy.danggi.activities.model.Memo"
             />
     </data>
 
