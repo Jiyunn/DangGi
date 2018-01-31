@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
       <variable
@@ -8,7 +10,7 @@
           type="me.jy.danggi.activities.WriteActivity"/>
     </data>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -17,6 +19,8 @@
         <Button
             android:id="@+id/btn_save"
             android:text="@string/save"
+            style="@style/constraintTop"
+            app:layout_constraintHorizontal_bias="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -26,13 +30,17 @@
         <EditText
             android:id="@+id/edit_memo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:minLines="20"
             android:padding="3dp"
-            android:textSize="13sp"
+            android:textSize="15sp"
             android:gravity="top"
             android:background="@drawable/border_write"
             android:textColor="@color/colorBlack"
+            app:layout_constraintTop_toBottomOf="@+id/btn_save"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             />
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>
