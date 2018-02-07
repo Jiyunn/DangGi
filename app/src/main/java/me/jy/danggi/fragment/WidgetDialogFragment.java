@@ -14,6 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
 import me.jy.danggi.activities.model.Memo;
@@ -86,9 +91,20 @@ public class WidgetDialogFragment extends DialogFragment  {
                 sortOrder);
 
         while (cursor.moveToNext()) {
-            adapter.updateDataSet(new Memo(cursor.getString(0), cursor.getString(1)));
+            adapter.updateDataSet(Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
         }
         adapter.notifyDataSetChanged(); //데이터 변경 알림.
+    }
+
+    private Date convertDateFormat ( String dateTime ) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss", Locale.KOREAN);
+//        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        try {
+            return dateFormat.parse(dateTime);
+        }catch ( ParseException e ){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

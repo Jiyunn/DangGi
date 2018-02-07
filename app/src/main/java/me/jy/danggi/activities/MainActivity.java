@@ -13,6 +13,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
 import me.jy.danggi.activities.model.Memo;
@@ -30,11 +36,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         initRecyclerView();
+
     }
 
     @Override
     protected void onStart () {
         super.onStart();
+        Log.d("jy", "onStart");
         getMemoData();
     }
 
@@ -62,26 +70,34 @@ public class MainActivity extends AppCompatActivity {
     private void getMemoData () {
         mDbHelper = new DataHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sortOrder =
-                DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
+        String sortOrder = DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
 
         Cursor cursor = db.query(
                 DataHelper.DataEntry.TABLE_MEMO,
                 new String[]{DataHelper.DataEntry.COLUMN_NAME_CONTENT , DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE},
                 null, null, null, null, sortOrder);
 
-        if(adapter.getItemCount() >0) {//데이터 항목이 존재하면,
-            cursor.moveToFirst();
-            adapter.updateDataSet(0, new Memo(cursor.getString(0), cursor.getString(1)));
-            cursor.moveToLast();
+        if(adapter.getItemCount() == 0) { //어댑터에 등록된 데이터가 없는 경우
+            while ( cursor.moveToNext() )
+                adapter.updateDataSet(Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
         }
-
-        while ( cursor.moveToNext()) {
-            Log.d("jy", "position " + Integer.toString(cursor.getPosition()));
-            adapter.updateDataSet(new Memo(cursor.getString(0), cursor.getString(1)));
+        else if ( adapter.getItemCount() != cursor.getCount() ) {//새로운 항목이 추가된경우
+            cursor.moveToFirst();
+            adapter.updateDataSet(0, Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
         }
         cursor.close();
         db.close();
+    }
+
+    private Date convertDateFormat ( String dateTime ) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault());
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            return dateFormat.parse(dateTime);
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
