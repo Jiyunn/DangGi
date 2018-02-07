@@ -21,6 +21,7 @@ public class WriteActivity extends AppCompatActivity {
     @Override
     public void onBackPressed () {
         super.onBackPressed();
+        Log.d("jy", "back pressed");
         if (saveMemo())
             Toast.makeText(getApplicationContext(), getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
     }
@@ -36,7 +37,6 @@ public class WriteActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() { //액티비티를 종료할 때 헬퍼닫음
         super.onDestroy();
-        Log.d("Write", "onDestory");
         if (mDbHelper != null)
             mDbHelper.close();
     }
