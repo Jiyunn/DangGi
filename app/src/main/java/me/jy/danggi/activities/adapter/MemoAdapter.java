@@ -52,6 +52,11 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
         notifyDataSetChanged();
     }
 
+    public void updateDataSet (  int position, Memo data ) {
+        this.dataSet.add(position, data);
+        notifyDataSetChanged();
+    }
+
     public void deleteDataSet ( int position ) {
         dataSet.remove(position);
         notifyDataSetChanged();

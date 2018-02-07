@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart () {
         super.onStart();
-        Log.d("jy", "onStart");
         getMemoData();
     }
 
@@ -71,15 +70,18 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{DataHelper.DataEntry.COLUMN_NAME_CONTENT , DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE},
                 null, null, null, null, sortOrder);
 
-        if(adapter.getItemCount() >0) //이미 데이터가 있으면, 있던거 지우고 다시 등록.. 근데 이거되게 비효율적인거같아..!
-            adapter.deleteDataSet();
+        if(adapter.getItemCount() >0) {//데이터 항목이 존재하면,
+            cursor.moveToFirst();
+            adapter.updateDataSet(0, new Memo(cursor.getString(0), cursor.getString(1)));
+            cursor.moveToLast();
+        }
 
-
-
-        while ( cursor.moveToNext() ) {
+        while ( cursor.moveToNext()) {
+            Log.d("jy", "position " + Integer.toString(cursor.getPosition()));
             adapter.updateDataSet(new Memo(cursor.getString(0), cursor.getString(1)));
         }
         cursor.close();
+        db.close();
     }
 
     @Override
