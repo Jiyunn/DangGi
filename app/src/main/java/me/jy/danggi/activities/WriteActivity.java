@@ -1,49 +1,49 @@
 package me.jy.danggi.activities;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import me.jy.danggi.R;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityWriteBinding;
 
-public class WriteActivity extends Activity {
+public class WriteActivity extends AppCompatActivity {
 
     ActivityWriteBinding binding;
+    private DataHelper mDbHelper;
 
-    DataHelper mDbHelper;
+    @Override
+    public void onBackPressed () {
+        super.onBackPressed();
+        if (saveMemo())
+            Toast.makeText(getApplicationContext(), getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write);
+
+       mDbHelper = new DataHelper(this);
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onDestroy() { //액티비티를 종료할 때 헬퍼닫음
+        super.onDestroy();
+        Log.d("Write", "onDestory");
         if (mDbHelper != null)
             mDbHelper.close();
-        super.onDestroy();
     }
 
-    public void saveWrittenContent(View v) {
-        if (saveMemo()) {
-            Toast.makeText(getApplicationContext(), getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            onDestroy();
-        }
-    }
 
     private boolean saveMemo() {
         try {
-            mDbHelper = new DataHelper(this);
             SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
             ContentValues values = new ContentValues();

@@ -14,9 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
 import me.jy.danggi.activities.model.Memo;
@@ -32,7 +29,6 @@ public class WidgetDialogFragment extends DialogFragment  {
     FragmentDialogBinding binding;
     private MemoAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private List<Memo> dataSet;
 
     DataHelper mDbHelper;
 
@@ -66,8 +62,7 @@ public class WidgetDialogFragment extends DialogFragment  {
     }
 
     private void initRecyclerView() {
-        dataSet = new ArrayList<>();
-        adapter = new MemoAdapter(dataSet);
+        adapter = new MemoAdapter();
         layoutManager = new LinearLayoutManager(getActivity());
 
         binding.recyclerviewDialogMemo.setHasFixedSize(true);
@@ -91,7 +86,7 @@ public class WidgetDialogFragment extends DialogFragment  {
                 sortOrder);
 
         while (cursor.moveToNext()) {
-            dataSet.add(new Memo(cursor.getString(0), cursor.getString(1)));
+            adapter.updateDataSet(new Memo(cursor.getString(0), cursor.getString(1)));
         }
         adapter.notifyDataSetChanged(); //데이터 변경 알림.
     }
