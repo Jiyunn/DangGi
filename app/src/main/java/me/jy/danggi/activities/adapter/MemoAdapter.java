@@ -22,7 +22,7 @@ import me.jy.danggi.databinding.ItemMemoBinding;
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder> {
 
     private List<Memo> dataSet = new ArrayList<>();
-    private PublishSubject<Integer> publishSubject;
+    private PublishSubject<Memo> publishSubject;
 
     public MemoAdapter () {
         this.publishSubject = PublishSubject.create();
@@ -39,7 +39,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
     public void onBindViewHolder ( MemoViewHolder holder, int position ) {
         Memo memo = dataSet.get(position);
         holder.binding.setMemo(memo);
-        holder.getLongClickObserver(position).subscribe(publishSubject);
+        holder.getLongClickObserver(memo).subscribe(publishSubject);
+        holder.getClickObserver(memo).subscribe(publishSubject);
     }
 
     @Override
@@ -57,24 +58,15 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
         notifyDataSetChanged();
     }
 
-    public void deleteDataSet ( int position ) {
-        dataSet.remove(position);
+    public void deleteData ( Memo data ) {
+        this.dataSet.remove(data);
         notifyDataSetChanged();
     }
 
-    public void deleteDataSet (  ) {
-        dataSet.clear();
-        notifyDataSetChanged();
-    }
-
-
-    public PublishSubject<Integer> getPublishSubject () {
+    public PublishSubject<Memo> getPublishSubject () {
         return this.publishSubject;
     }
 
-    public Memo getDataFromPosition (int position) {
-        return dataSet.get(position);
-    }
 
     static class MemoViewHolder extends RecyclerView.ViewHolder {
 
@@ -85,15 +77,20 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
             binding = DataBindingUtil.bind(itemView);
         }
 
-        private Observable<Integer> getLongClickObserver ( int position ) {
+        private Observable<Memo> getClickObserver ( Memo item ) {
+            return Observable.create(emitter -> {
+                itemView.setOnClickListener(v -> {
+                    emitter.onNext(item);
+                });
+            });
+        }
+        private Observable<Memo> getLongClickObserver ( Memo item ) {
             return Observable.create(emitter -> {
                 itemView.setOnLongClickListener(v -> {
-                    emitter.onNext(position);
+                    emitter.onNext(item);
                     return true;
                 });
             });
         }
-
-
     }
 }
