@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +18,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
 import me.jy.danggi.activities.model.Memo;
@@ -36,30 +38,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         initRecyclerView();
-
     }
 
     @Override
     protected void onStart () {
         super.onStart();
-        Log.d("jy", "onStart");
         getMemoData();
+    }
+
+    private Observable<Memo> getDeleteEventObservable() {
+       return adapter.getPublishSubject()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+    private Observable<Memo> getIntentEventObservable() {
+        return adapter.getPublishSubject();
     }
 
     public void initRecyclerView () {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         adapter = new MemoAdapter();
-        adapter.getPublishSubject()
-                .subscribe(s -> {
-                    deleteMemoData(adapter.getDataFromPosition(s));
-                    adapter.deleteDataSet(s);
+
+//        getDeleteEventObservable().subscribe(this::deleteMemo);
+//        getDeleteEventObservable().subscribe(adapter::deleteData);
+
+        getIntentEventObservable()
+                .subscribe(data -> {
+                    Intent intent = new Intent(getApplicationContext(), ContentActivity.class);
+                    intent.putExtra("memo", data);
+                    startActivity(intent);
                 });
+
         binding.recyclerviewMain.setHasFixedSize(true);
         binding.recyclerviewMain.setAdapter(adapter);
         binding.recyclerviewMain.setLayoutManager(layoutManager);
     }
 
-    private void deleteMemoData ( Memo memo ) {
+    /***
+     * delete from Table.
+     * @param memo
+     */
+    private void deleteMemo ( Memo memo ) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String selection = DataHelper.DataEntry.COLUMN_NAME_CONTENT + " LIKE ?";
         String[] selectionArgs = {memo.getContent()};
@@ -67,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         db.delete(DataHelper.DataEntry.TABLE_MEMO, selection, selectionArgs);
     }
 
+    /***
+     * get Data from  Memo Table
+     */
     private void getMemoData () {
         mDbHelper = new DataHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
