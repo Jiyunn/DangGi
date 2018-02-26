@@ -6,4 +6,6 @@
     <string name = "save_complete">저장되었습니다!</string>
     <string name = "edit_complete">수정되었습니다!</string>
     <string name = "widget_label">Danggi (당신의  기록)</string>
+    <string name = "menu_setting">설정</string>
+    <string name = "menu_share">공유</string>
 </resources>

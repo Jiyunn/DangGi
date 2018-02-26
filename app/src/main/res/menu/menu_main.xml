@@ -6,6 +6,18 @@
         android:id="@+id/menu_write"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="메모 쓰기"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         />
+    
+    <item
+        android:title="@string/menu_share"
+        android:id="@+id/menu_share"
+        android:icon="@drawable/ic_share_24dp"
+        app:showAsAction="always"/>
+    
+    <item
+        android:title="@string/menu_setting"
+        android:id="@+id/menu_setting"
+        android:icon="@drawable/ic_settings_24dp"
+        app:showAsAction="always"/>
 </menu>

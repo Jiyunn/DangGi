@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
         <variable
@@ -11,8 +13,19 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="match_parent"
         >
+    
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_main"
+            android:layout_width = "match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title ="@string/app_name"
+            app:titleTextColor="@color/colorMenus"
+            android:layout_marginBottom="2dp"
+            android:background="@android:color/white"
+            />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_main"
