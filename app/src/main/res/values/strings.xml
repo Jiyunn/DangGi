@@ -4,5 +4,6 @@
     <string name = "save">저장하기</string>
     <string name = "click">클릭해주세요</string>
     <string name = "save_complete">저장되었습니다!</string>
+    <string name = "edit_complete">수정되었습니다!</string>
     <string name = "widget_label">Danggi (당신의  기록)</string>
 </resources>

@@ -23,6 +23,7 @@ public class DataHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_MEMO_ENTRIES =
             "DROP TABLE IF EXISTS " + DataEntry.TABLE_MEMO;
 
+
     public DataHelper ( Context context ) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

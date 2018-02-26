@@ -6,8 +6,11 @@
 
     <data>
       <variable
-          name="write"
+          name="activity"
           type="me.jy.danggi.activities.WriteActivity"/>
+        <variable
+            name = "obj"
+            type = "me.jy.danggi.activities.model.Memo"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -19,17 +22,16 @@
 
         <EditText
             android:id="@+id/edit_memo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minLines="20"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:padding="3dp"
             android:textSize="15sp"
+            style="@style/constraintCenter"
+            android:text="@{obj.content}"
+            android:focusableInTouchMode="true"
             android:gravity="top"
             android:background="@drawable/border_write"
-            android:textColor="@color/colorBlack"
-            app:layout_constraintTop_toBottomOf="@+id/btn_save"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@android:color/black"
             />
 
     </android.support.constraint.ConstraintLayout>

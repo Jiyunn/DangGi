@@ -36,8 +36,6 @@
 
         <activity android:name = ".activities.SettingActivity">
         </activity>
-        <activity android:name = ".activities.ContentActivity">
-        </activity>
     </application>
 
 </manifest>
