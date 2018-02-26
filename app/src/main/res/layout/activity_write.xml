@@ -1,38 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
     >
-
+    
     <data>
-      <variable
-          name="activity"
-          type="me.jy.danggi.activities.WriteActivity"/>
+        
+        <variable
+            name = "activity"
+            type = "me.jy.danggi.activities.WriteActivity"
+            />
+        
         <variable
             name = "obj"
-            type = "me.jy.danggi.activities.model.Memo"/>
-    </data>
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-
-        <EditText
-            android:id="@+id/edit_memo"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:padding="3dp"
-            android:textSize="15sp"
-            style="@style/constraintCenter"
-            android:text="@{obj.content}"
-            android:focusableInTouchMode="true"
-            android:gravity="top"
-            android:background="@drawable/border_write"
-            android:textColor="@android:color/black"
+            type = "me.jy.danggi.activities.model.Memo"
             />
-
+    </data>
+    
+    <android.support.constraint.ConstraintLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:orientation = "vertical"
+        >
+        
+        <android.support.v7.widget.Toolbar
+            android:id = "@+id/toolbar_write"
+            style="@style/constraintTop"
+            app:titleTextColor="@android:color/white"
+            android:layout_width = "match_parent"
+            android:layout_height = "?attr/actionBarSize"
+            android:background="@color/colorMenus"
+            />
+        
+        <EditText
+            android:id = "@+id/edit_memo"
+            android:labelFor="@+id/edit_memo"
+            android:layout_width = "0dp"
+            android:layout_height = "0dp"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_write"
+            android:gravity = "top"
+            android:padding = "@dimen/basic_margin"
+            android:text = "@{obj.content}"
+            android:textColor = "@android:color/black"
+            android:textSize = "16sp"
+            />
+    
     </android.support.constraint.ConstraintLayout>
 </layout>
