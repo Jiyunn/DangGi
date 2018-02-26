@@ -14,6 +14,9 @@ public class BindingConverts {
 
     @BindingConversion
     public static String convertDate(Date date) {
-        return new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm", Locale.KOREAN).format(date);
+        if (date !=null)
+            return new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm", Locale.KOREAN).format(date);
+    else
+        return "-1";
     }
 }

@@ -30,6 +30,17 @@ public class MainActivity extends AppCompatActivity {
     private MemoAdapter adapter;
     private DataHelper mDbHelper;
 
+    private final int EDIT_CODE = 0;
+
+    @Override
+    protected void onActivityResult ( int requestCode, int resultCode, Intent data ) {
+        if ( requestCode == EDIT_CODE ) { //수정항목에대한 데이터가 성공적으로 들어왔다면 ?
+            if ( resultCode == RESULT_OK ) {
+                adapter.updateDataSet((Memo) data.getSerializableExtra("OLD_OBJECT"), (Memo) data.getSerializableExtra("EDITED_OBJECT"));
+            }
+        }
+    }
+
     @Override
     protected void onCreate ( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
@@ -47,21 +58,26 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         adapter = new MemoAdapter();
 
-       adapter.getPublishSubject()
-                .subscribe( data -> {
+        adapter.getLongClickSubject()
+                .subscribe(data -> {
                     adapter.deleteData(data);
                     deleteMemo(data);
                 });
+        adapter.getClickSubject()
+                .subscribe(data -> goToWriteToEdit(data));
 
         binding.recyclerviewMain.setHasFixedSize(true);
         binding.recyclerviewMain.setAdapter(adapter);
         binding.recyclerviewMain.setLayoutManager(layoutManager);
     }
 
-    /***
-     * delete from Table.
-     * @param memo
-     */
+    private void goToWriteToEdit ( Memo data ) {
+        Intent intent = new Intent(getApplicationContext(), WriteActivity.class);
+        intent.putExtra("OBJECT", data);
+        startActivityForResult(intent, EDIT_CODE);
+    }
+
+
     private void deleteMemo ( Memo memo ) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String selection = DataHelper.DataEntry.COLUMN_NAME_CONTENT + " LIKE ?";
@@ -83,11 +99,10 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{DataHelper.DataEntry.COLUMN_NAME_CONTENT , DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE},
                 null, null, null, null, sortOrder);
 
-        if(adapter.getItemCount() == 0) { //어댑터에 등록된 데이터가 없는 경우
+        if ( adapter.getItemCount() == 0 ) { //어댑터에 등록된 데이터가 없는 경우
             while ( cursor.moveToNext() )
                 adapter.updateDataSet(Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
-        }
-        else if ( adapter.getItemCount() != cursor.getCount() ) {//새로운 항목이 추가된경우
+        } else if ( adapter.getItemCount() != cursor.getCount() ) {//새로운 항목이 추가된경우
             cursor.moveToFirst();
             adapter.updateDataSet(0, Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
         }
@@ -95,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
 
-    private Date convertDateFormat ( String dateTime ) {
+    private Date convertDateFormat ( String dateTime ) { //데이터베이스에 저장된 String을 다시 Date로 ? 이것도 꽤 비효율적인듯
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault());
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {

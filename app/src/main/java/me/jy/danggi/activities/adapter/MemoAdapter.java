@@ -22,10 +22,12 @@ import me.jy.danggi.databinding.ItemMemoBinding;
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder> {
 
     private List<Memo> dataSet = new ArrayList<>();
-    private PublishSubject<Memo> publishSubject;
+    private PublishSubject<Memo> longClickSubject;
+    private PublishSubject<Memo> clickSubject;
 
     public MemoAdapter () {
-        this.publishSubject = PublishSubject.create();
+        this.longClickSubject = PublishSubject.create();
+        this.clickSubject = PublishSubject.create();
     }
 
     @Override
@@ -39,13 +41,23 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
     public void onBindViewHolder ( MemoViewHolder holder, int position ) {
         Memo memo = dataSet.get(position);
         holder.binding.setMemo(memo);
-        holder.getLongClickObserver(memo).subscribe(publishSubject);
+        holder.getLongClickObserver(memo).subscribe(longClickSubject);
+        holder.getClickObserver(memo).subscribe(clickSubject);
     }
 
     @Override
     public int getItemCount () {
         return (dataSet != null ? dataSet.size() : 0);
     }
+
+    public void updateDataSet ( Memo oldData, Memo newData ) {
+        int position = dataSet.indexOf(oldData);
+
+        if ( position != -1 )
+            dataSet.set(position, newData);
+        notifyDataSetChanged();
+    }
+
 
     public void updateDataSet ( Memo data ) {
         this.dataSet.add(data);
@@ -62,8 +74,12 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
         notifyDataSetChanged();
     }
 
-    public PublishSubject<Memo> getPublishSubject () {
-        return this.publishSubject;
+    public PublishSubject<Memo> getLongClickSubject () {
+        return longClickSubject;
+    }
+
+    public PublishSubject<Memo> getClickSubject () {
+        return clickSubject;
     }
 
 
@@ -83,6 +99,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
                 });
             });
         }
+
         private Observable<Memo> getLongClickObserver ( Memo item ) {
             return Observable.create(emitter -> {
                 itemView.setOnLongClickListener(v -> {
