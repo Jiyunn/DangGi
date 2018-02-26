@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -29,6 +30,8 @@ public class WriteActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write);
         binding.setActivity(this);
 
+        initToolbar();
+
         if ( getIntent() != null ) { //수정모드일경우.
             oldData = (Memo) getIntent().getSerializableExtra("OBJECT");
             binding.setObj(oldData);
@@ -44,6 +47,11 @@ public class WriteActivity extends AppCompatActivity {
             mDbHelper.close();
     }
 
+    private void initToolbar () {
+        setSupportActionBar(binding.toolbarWrite);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
     /**
      * DB에 등록
      *
@@ -51,6 +59,8 @@ public class WriteActivity extends AppCompatActivity {
      * @return
      */
     private boolean saveMemo ( String memoText ) {
+        if ( memoText.trim().length() == 0 )
+            return true;
         try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
             ContentValues values = new ContentValues();
             values.put(DataHelper.DataEntry.COLUMN_NAME_CONTENT, memoText);
@@ -76,7 +86,7 @@ public class WriteActivity extends AppCompatActivity {
             values.put(DataHelper.DataEntry.COLUMN_NAME_CONTENT, memoText);
 
             String selection = DataHelper.DataEntry.COLUMN_NAME_CONTENT + " LIKE ?";
-            String[] selectionArgs = {binding.getObj().getContent()};
+            String[] selectionArgs = { binding.getObj().getContent() };
 
             db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
             db.close();
@@ -91,7 +101,10 @@ public class WriteActivity extends AppCompatActivity {
     public void onBackPressed () {
         String editedContent = binding.editMemo.getText().toString(); //새로 입력한 문자열
 
-        if ( binding.getObj() != null ) {
+        if (editedContent.trim().length() ==0 )
+            super.onBackPressed();
+
+        else if ( binding.getObj() != null ) {
             if ( editMemo(editedContent) ) {
                 Toast.makeText(getApplicationContext(), getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
                 Memo editedData = Memo.of(editedContent, new Date(System.currentTimeMillis()));
@@ -106,5 +119,15 @@ public class WriteActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected ( MenuItem item ) {
+        switch ( item.getItemId() ) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return false;
     }
 }
