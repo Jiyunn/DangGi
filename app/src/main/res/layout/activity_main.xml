@@ -3,35 +3,52 @@
     xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:app = "http://schemas.android.com/apk/res-auto"
     >
-
+    
     <data>
+        
         <variable
-            name="main"
-            type="me.jy.danggi.activities.MainActivity"
+            name = "activity"
+            type = "me.jy.danggi.activities.MainActivity"
             />
     </data>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="match_parent"
-        >
     
+    <android.support.constraint.ConstraintLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        android:orientation = "vertical"
+        >
+        
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_main"
+            android:id = "@+id/toolbar_main"
+            style = "@style/constraintTop"
             android:layout_width = "match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title ="@string/app_name"
-            app:titleTextColor="@color/colorMenus"
-            android:layout_marginBottom="2dp"
-            android:background="@android:color/white"
+            android:layout_height = "?attr/actionBarSize"
+            android:layout_marginBottom = "2dp"
+            android:background = "@color/colorMenus"
+            app:title = "@string/app_name"
+            app:titleTextColor = "@android:color/white"
             />
-
+        
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview_main"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id = "@+id/recyclerview_main"
+            android:layout_width = "0dp"
+            android:layout_height = "0dp"
+            app:layout_constraintBottom_toBottomOf = "parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toBottomOf = "@+id/toolbar_main"
             />
-
-    </LinearLayout>
+        
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:layout_margin = "16dp"
+            android:onClick = "@{activity::onFabBtnClick}"
+            android:src = "@drawable/ic_create_24dp"
+            app:fabSize = "normal"
+            app:layout_constraintBottom_toBottomOf = "parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            />
+    
+    </android.support.constraint.ConstraintLayout>
 </layout>
