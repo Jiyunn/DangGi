@@ -40,7 +40,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
         Memo memo = dataSet.get(position);
         holder.binding.setMemo(memo);
         holder.getLongClickObserver(memo).subscribe(publishSubject);
-        holder.getClickObserver(memo).subscribe(publishSubject);
     }
 
     @Override

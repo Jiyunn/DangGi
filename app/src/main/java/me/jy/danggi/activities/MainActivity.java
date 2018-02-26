@@ -18,9 +18,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
 import me.jy.danggi.activities.model.Memo;
@@ -46,27 +43,14 @@ public class MainActivity extends AppCompatActivity {
         getMemoData();
     }
 
-    private Observable<Memo> getDeleteEventObservable() {
-       return adapter.getPublishSubject()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-    private Observable<Memo> getIntentEventObservable() {
-        return adapter.getPublishSubject();
-    }
-
     public void initRecyclerView () {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         adapter = new MemoAdapter();
 
-//        getDeleteEventObservable().subscribe(this::deleteMemo);
-//        getDeleteEventObservable().subscribe(adapter::deleteData);
-
-        getIntentEventObservable()
-                .subscribe(data -> {
-                    Intent intent = new Intent(getApplicationContext(), ContentActivity.class);
-                    intent.putExtra("memo", data);
-                    startActivity(intent);
+       adapter.getPublishSubject()
+                .subscribe( data -> {
+                    adapter.deleteData(data);
+                    deleteMemo(data);
                 });
 
         binding.recyclerviewMain.setHasFixedSize(true);
