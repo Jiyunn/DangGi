@@ -21,7 +21,7 @@ import java.util.TimeZone;
 
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
-import me.jy.danggi.activities.model.Memo;
+import me.jy.danggi.model.Memo;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityMainBinding;
 
