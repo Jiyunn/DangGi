@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.util.Date;
 
 import me.jy.danggi.R;
-import me.jy.danggi.activities.model.Memo;
+import me.jy.danggi.model.Memo;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityWriteBinding;
 

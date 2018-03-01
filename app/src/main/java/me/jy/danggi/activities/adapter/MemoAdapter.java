@@ -12,7 +12,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.jy.danggi.R;
-import me.jy.danggi.activities.model.Memo;
+import me.jy.danggi.model.Memo;
 import me.jy.danggi.databinding.ItemMemoBinding;
 
 /**

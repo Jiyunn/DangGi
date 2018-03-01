@@ -7,7 +7,7 @@
     <data>
         <variable
             name="memo"
-            type="me.jy.danggi.activities.model.Memo"
+            type="me.jy.danggi.model.Memo"
             />
     </data>
 
@@ -16,7 +16,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="4dp"
         android:background="@android:color/white"
-        android:padding="6dp"
+        android:padding="@dimen/item_padding"
         >
 
         <CheckBox
@@ -37,7 +37,7 @@
             android:maxLines="1"
             android:text="@{memo.content}"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:gravity="center_vertical"
             app:layout_constraintStart_toEndOf="@+id/check_item_content"
             app:layout_constraintTop_toTopOf="parent"

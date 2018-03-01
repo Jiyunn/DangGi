@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    >
+    
+    <data>
+        
+        <variable
+            name = "activity"
+            type = "me.jy.danggi.activities.ConfigureActivity"
+            />
+    </data>
+    
+    <android.support.constraint.ConstraintLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent"
+        >
+        
+        <android.support.v7.widget.Toolbar
+            android:id = "@+id/toolbar_setting"
+            style = "@style/ConstraintTop"
+            android:layout_width = "match_parent"
+            android:layout_height = "?attr/actionBarSize"
+            android:layout_marginBottom = "2dp"
+            android:background = "@color/colorMenus"
+            app:title = "위젯 설정"
+            app:titleTextColor = "@android:color/white"
+            />
+        
+        
+        <GridLayout
+            android:layout_width = "0dp"
+            android:layout_height = "0dp"
+            android:columnCount = "2"
+            android:padding = "@dimen/widget_margin"
+            android:useDefaultMargins = "true"
+            app:layout_constraintBottom_toBottomOf = "parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toBottomOf = "@+id/toolbar_setting"
+            >
+            
+            <TextView
+                style="@style/ConfigureMenuTextStyle"
+                android:text = "@string/config_memo"
+                />
+            
+            <TextView
+                android:id="@+id/text_select_memo"
+                style="@style/ConfigureContentTextStyle"
+                android:onClick="@{activity::onSelectMemoClick}"
+                android:hint = "@string/ask_choose"
+                />
+    
+            <TextView
+                style="@style/ConfigureMenuTextStyle"
+                android:text = "@string/text_color"
+                android:gravity="center"
+                />
+    
+            <TextView
+                android:id="@+id/text_select_text_color"
+                style="@style/ConfigureContentTextStyle"
+                android:hint = "@string/ask_choose"
+                />
+    
+            <TextView
+                style="@style/ConfigureMenuTextStyle"
+                android:text = "@string/background_color"
+                android:gravity="center"
+                />
+    
+            <TextView
+                android:id="@+id/text_select_background_color"
+                style="@style/ConfigureContentTextStyle"
+                android:hint = "@string/ask_choose"
+                />
+            <TextView
+                style="@style/ConfigureMenuTextStyle"
+                android:text = "@string/sort"
+                android:gravity="center"
+                />
+    
+            <TextView
+                android:id="@+id/text_select_sort"
+                style="@style/ConfigureContentTextStyle"
+                android:hint = "@string/ask_choose"
+                />
+        
+        </GridLayout>
+    
+    
+    </android.support.constraint.ConstraintLayout>
+
+
+</layout>

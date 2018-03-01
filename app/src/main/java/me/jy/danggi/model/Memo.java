@@ -1,4 +1,4 @@
-package me.jy.danggi.activities.model;
+package me.jy.danggi.model;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,4 +19,7 @@ public class Memo implements Serializable{
     private Date writeDate;
 
 
+    public Memo ( String content ) {
+        this.content = content;
+    }
 }
