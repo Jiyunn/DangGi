@@ -16,7 +16,7 @@ public class DataHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_MEMO_ENTRIES =
             "CREATE TABLE " + DataEntry.TABLE_MEMO + " (" +
-                    DataEntry._ID + " INTEGER PRIMARY KEY," +
+                    DataEntry._ID+ " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     DataEntry.COLUMN_NAME_CONTENT + " TEXT," +
                     DataEntry.COLUMN_NAME_WRITE_DATE + " DATE DEFAULT CURRENT_TIMESTAMP)";
 

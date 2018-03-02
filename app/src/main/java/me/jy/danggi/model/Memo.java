@@ -15,11 +15,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Memo implements Serializable{
 
+    private int id;
     private String content;
     private Date writeDate;
 
 
     public Memo ( String content ) {
         this.content = content;
+    }
+
+    public Memo ( String content, Date writeDate ) {
+        this.content = content;
+        this.writeDate = writeDate;
     }
 }
