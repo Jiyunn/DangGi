@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,9 +22,9 @@ import java.util.TimeZone;
 
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
-import me.jy.danggi.model.Memo;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityMainBinding;
+import me.jy.danggi.model.Memo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult ( int requestCode, int resultCode, Intent data ) {
         if ( requestCode == EDIT_CODE ) { //수정항목에대한 데이터가 성공적으로 들어왔다면 ?
             if ( resultCode == RESULT_OK ) {
-                adapter.updateDataSet((Memo) data.getSerializableExtra("OLD_OBJECT"), (Memo) data.getSerializableExtra("EDITED_OBJECT"));
+                adapter.updateDataSet((Memo)data.getSerializableExtra("OLD_OBJECT"), (Memo)data.getSerializableExtra("EDITED_OBJECT"));
             }
         }
     }
@@ -89,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteMemo ( Memo memo ) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        String selection = DataHelper.DataEntry.COLUMN_NAME_CONTENT + " LIKE ?";
-        String[] selectionArgs = { memo.getContent() };
+        String selection = DataHelper.DataEntry._ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(memo.getId()) };
+        Log.d("jy", Long.toString(memo.getId()));
 
         db.delete(DataHelper.DataEntry.TABLE_MEMO, selection, selectionArgs);
     }
@@ -105,19 +107,32 @@ public class MainActivity extends AppCompatActivity {
 
         Cursor cursor = db.query(
                 DataHelper.DataEntry.TABLE_MEMO,
-                new String[]{ DataHelper.DataEntry.COLUMN_NAME_CONTENT , DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
+                new String[]{
+                        DataHelper.DataEntry._ID,
+                        DataHelper.DataEntry.COLUMN_NAME_CONTENT ,
+                        DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
                 null, null, null, null, sortOrder);
 
         if ( adapter.getItemCount() == 0 ) { //어댑터에 등록된 데이터가 없는 경우
-            while ( cursor.moveToNext() )
-                adapter.updateDataSet(Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
+            while ( cursor !=null && cursor.moveToNext() ) {
+                adapter.updateDataSet(getDataFromDB(cursor));
+            }
         } else if ( adapter.getItemCount() != cursor.getCount() ) {//새로운 항목이 추가된경우
             cursor.moveToFirst();
-            adapter.updateDataSet(0, Memo.of(cursor.getString(0), convertDateFormat(cursor.getString(1))));
+            adapter.updateDataSet(0, getDataFromDB(cursor));
         }
         cursor.close();
         db.close();
     }
+
+    private Memo getDataFromDB(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry._ID));
+        String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_CONTENT));
+        Date writtenDate = convertDateFormat(cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE)));
+
+        return Memo.of(id, content, writtenDate);
+    }
+
 
     private Date convertDateFormat ( String dateTime ) { //데이터베이스에 저장된 String을 다시 Date로 ? 이것도 꽤 비효율적인듯
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
@@ -143,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void onFabBtnClick(View v) {
+    public void onFabBtnClick ( View v ) {
         startActivity(new Intent(getApplicationContext(), WriteActivity.class));
     }
 

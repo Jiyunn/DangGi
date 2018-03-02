@@ -107,7 +107,7 @@ public class WriteActivity extends AppCompatActivity {
         else if ( binding.getObj() != null ) {
             if ( editMemo(editedContent) ) {
                 Toast.makeText(getApplicationContext(), getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
-                Memo editedData = Memo.of(editedContent, new Date(System.currentTimeMillis()));
+                Memo editedData =new Memo(editedContent, new Date(System.currentTimeMillis()));
 
                 Intent intent = new Intent();
                 intent.putExtra("OLD_OBJECT", oldData);
