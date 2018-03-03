@@ -3,12 +3,12 @@ package me.jy.danggi.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult ( int requestCode, int resultCode, Intent data ) {
         if ( requestCode == EDIT_CODE ) { //수정항목에대한 데이터가 성공적으로 들어왔다면 ?
             if ( resultCode == RESULT_OK ) {
-                adapter.updateDataSet((Memo)data.getSerializableExtra("OLD_OBJECT"), (Memo)data.getSerializableExtra("EDITED_OBJECT"));
+                adapter.updateDataSet((Memo)data.getSerializableExtra("oldItem"), (Memo)data.getSerializableExtra("editedItem"));
             }
         }
     }
@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setActivity(this);
-
 
         initToolbar();
         initRecyclerView();
@@ -81,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
         binding.recyclerviewMain.setLayoutManager(layoutManager);
     }
 
-    private void goToWriteToEdit ( Memo data ) {
+    private void goToWriteToEdit ( Memo item ) {
         Intent intent = new Intent(getApplicationContext(), WriteActivity.class);
-        intent.putExtra("OBJECT", data);
+        intent.putExtra("item", item);
         startActivityForResult(intent, EDIT_CODE);
     }
 
@@ -92,7 +91,6 @@ public class MainActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         String selection = DataHelper.DataEntry._ID + " LIKE ?";
         String[] selectionArgs = { String.valueOf(memo.getId()) };
-        Log.d("jy", Long.toString(memo.getId()));
 
         db.delete(DataHelper.DataEntry.TABLE_MEMO, selection, selectionArgs);
     }
@@ -102,30 +100,32 @@ public class MainActivity extends AppCompatActivity {
      */
     private void getMemoData () {
         mDbHelper = new DataHelper(this);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sortOrder = DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
+        try (SQLiteDatabase db = mDbHelper.getReadableDatabase()) {
+            String sortOrder = DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
 
-        Cursor cursor = db.query(
-                DataHelper.DataEntry.TABLE_MEMO,
-                new String[]{
-                        DataHelper.DataEntry._ID,
-                        DataHelper.DataEntry.COLUMN_NAME_CONTENT ,
-                        DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
-                null, null, null, null, sortOrder);
+            Cursor cursor = db.query(
+                    DataHelper.DataEntry.TABLE_MEMO,
+                    new String[]{
+                            DataHelper.DataEntry._ID ,
+                            DataHelper.DataEntry.COLUMN_NAME_CONTENT ,
+                            DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
+                    null, null, null, null, sortOrder);
 
-        if ( adapter.getItemCount() == 0 ) { //어댑터에 등록된 데이터가 없는 경우
-            while ( cursor !=null && cursor.moveToNext() ) {
-                adapter.updateDataSet(getDataFromDB(cursor));
+            if ( adapter.getItemCount() == 0 ) { //어댑터에 등록된 데이터가 없는 경우
+                while ( cursor != null && cursor.moveToNext() ) {
+                    adapter.updateDataSet(getDataFromDB(cursor));
+                }
+            } else if ( adapter.getItemCount() != cursor.getCount() ) {//새로운 항목이 추가된경우
+                cursor.moveToFirst();
+                adapter.updateDataSet(0, getDataFromDB(cursor));
             }
-        } else if ( adapter.getItemCount() != cursor.getCount() ) {//새로운 항목이 추가된경우
-            cursor.moveToFirst();
-            adapter.updateDataSet(0, getDataFromDB(cursor));
+            cursor.close();
+        }catch ( SQLiteException e) {
+            e.printStackTrace();
         }
-        cursor.close();
-        db.close();
     }
 
-    private Memo getDataFromDB(Cursor cursor) {
+    private Memo getDataFromDB ( Cursor cursor ) {
         int id = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry._ID));
         String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_CONTENT));
         Date writtenDate = convertDateFormat(cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE)));

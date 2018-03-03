@@ -31,12 +31,12 @@
         <item name = "android:padding">6dp</item>
         <item name = "android:textSize">16sp</item>
         <item name = "android:layout_height">wrap_content</item>
-        <item name = "android:layout_width">wrap_content</item>
+        <item name = "android:layout_width">0dp</item>
     </style>
     
     <style name = "ConfigureContentTextStyle">
         <item name = "android:maxLines">1</item>
-        <item name = "android:maxLength">10</item>
+        <item name = "android:minLines">1</item>
         <item name = "android:background">@color/colorMenus</item>
         <item name = "android:textColor">@android:color/white</item>
         <item name = "android:textColorHint">@android:color/white</item>
@@ -45,6 +45,6 @@
         <item name = "android:padding">6dp</item>
         <item name = "android:textSize">16sp</item>
         <item name = "android:layout_height">wrap_content</item>
-        <item name = "android:layout_width">wrap_content</item>
+        <item name = "android:layout_width">0dp</item>
     </style>
 </resources>

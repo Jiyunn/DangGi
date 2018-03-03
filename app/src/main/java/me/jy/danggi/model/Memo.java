@@ -28,4 +28,9 @@ public class Memo implements Serializable{
         this.content = content;
         this.writeDate = writeDate;
     }
+
+    public Memo ( int id, String content ) {
+        this.id = id;
+        this.content = content;
+    }
 }

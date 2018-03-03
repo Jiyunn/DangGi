@@ -44,7 +44,7 @@ public class ListDialogFragment extends DialogFragment {
         super.onAttach(context);
         try {
             onMemoItemClickListener = (OnMemoItemClickListener)context;
-        }catch ( ClassCastException e ){
+        } catch ( ClassCastException e ) {
             e.printStackTrace();
         }
     }
@@ -63,7 +63,7 @@ public class ListDialogFragment extends DialogFragment {
 
         adapter = new ListDialogAdapter();
         adapter.getmPublishSubject()
-                .subscribe( data-> onMemoItemClickListener.onMemoItemClickListener(data) ); //전달받은 데이터 보내줌. 이거 걍 스트링
+                .subscribe(data -> onMemoItemClickListener.onMemoItemClickListener(data)); //전달받은 데이터 보내줌. 이거 걍 스트링
         getMemoData();
 
         binding.recyclerviewDialog.setAdapter(adapter);
@@ -92,10 +92,18 @@ public class ListDialogFragment extends DialogFragment {
 
         Cursor cursor = db.query(
                 DataHelper.DataEntry.TABLE_MEMO,
-                new String[]{ DataHelper.DataEntry.COLUMN_NAME_CONTENT , DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
+                new String[]{
+                        DataHelper.DataEntry._ID ,
+                        DataHelper.DataEntry.COLUMN_NAME_CONTENT ,
+                        DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
                 null, null, null, null, sortOrder);
-        while ( cursor.moveToNext() )
-            adapter.updateDataSet(new Memo(cursor.getString(0)));
+
+        while ( cursor.moveToNext() ) {
+            int id = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry._ID));
+            String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_CONTENT));
+
+            adapter.updateDataSet(new Memo(id, content));
+        }
         cursor.close();
         db.close();
     }
