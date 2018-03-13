@@ -25,11 +25,12 @@
         
         <android.support.v7.widget.Toolbar
             android:id = "@+id/toolbar_write"
-            style="@style/ConstraintTop"
-            app:titleTextColor="@android:color/white"
-            android:layout_width = "match_parent"
-            android:layout_height = "?attr/actionBarSize"
-            android:background="@color/colorMenus"
+            style = "@style/ToolbarStyle"
+            app:titleTextAppearance="@style/ToolbarTitleTextStyle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/app_name"
             />
         
         <EditText

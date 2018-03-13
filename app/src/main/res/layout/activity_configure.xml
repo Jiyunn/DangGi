@@ -19,14 +19,14 @@
         
         <android.support.v7.widget.Toolbar
             android:id = "@+id/toolbar_setting"
-            style = "@style/ConstraintTop"
-            android:layout_width = "match_parent"
-            android:layout_height = "?attr/actionBarSize"
-            android:layout_marginBottom = "2dp"
-            android:background = "@color/colorMenus"
-            app:title = "위젯 설정"
-            app:titleTextColor = "@android:color/white"
+            style = "@style/ToolbarStyle"
+            app:titleTextAppearance="@style/ToolbarTitleTextStyle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title = "위젯설정"
             />
+            
         
         
         <GridLayout
