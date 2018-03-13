@@ -25,6 +25,8 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
     private PublishSubject<Memo> longClickSubject;
     private PublishSubject<Memo> clickSubject;
 
+
+
     public MemoAdapter () {
         this.longClickSubject = PublishSubject.create();
         this.clickSubject = PublishSubject.create();
