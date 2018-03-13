@@ -1,5 +1,7 @@
 package me.jy.danggi.activities;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -69,15 +71,42 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.getLongClickSubject()
                 .subscribe(data -> {
-                    adapter.deleteData(data);
-                    deleteMemo(data);
+                    makeDialog(data).show();
                 });
+
         adapter.getClickSubject()
                 .subscribe(data -> goToWriteToEdit(data));
 
         binding.recyclerviewMain.setHasFixedSize(true);
         binding.recyclerviewMain.setAdapter(adapter);
         binding.recyclerviewMain.setLayoutManager(layoutManager);
+    }
+
+    private Dialog makeDialog ( Memo item ) { //다이얼로그로 메뉴 띄움
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        return builder.setTitle(item.getContent())
+                .setItems(R.array.menus, ( dialog, which ) -> {
+                    switch ( which ) {
+                        case 0:
+                            adapter.deleteData(item);
+                            deleteMemo(item);
+                            break;
+                        case 1:
+                            shareItem(item);
+                            break;
+                    }
+                }).create();
+    }
+
+    private void shareItem ( Memo item ) {
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,  item.getContent());
+        sendIntent.setType("text/plain");
+
+        Intent chooser = Intent.createChooser(sendIntent, getString(R.string.menu_share));
+
+        if ( sendIntent.resolveActivity(getPackageManager()) != null )
+            startActivity(chooser);
     }
 
     private void goToWriteToEdit ( Memo item ) {
@@ -100,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void getMemoData () {
         mDbHelper = new DataHelper(this);
-        try (SQLiteDatabase db = mDbHelper.getReadableDatabase()) {
+        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             String sortOrder = DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
 
             Cursor cursor = db.query(
@@ -120,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.updateDataSet(0, getDataFromDB(cursor));
             }
             cursor.close();
-        }catch ( SQLiteException e) {
+        } catch ( SQLiteException e ) {
             e.printStackTrace();
         }
     }
@@ -165,8 +194,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected ( MenuItem item ) {
         switch ( item.getItemId() ) {
-            case R.id.menu_share:
-                return true;
             case R.id.menu_setting:
                 return true;
             default:

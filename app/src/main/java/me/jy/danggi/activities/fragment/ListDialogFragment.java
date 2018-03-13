@@ -60,7 +60,6 @@ public class ListDialogFragment extends DialogFragment {
     public View onCreateView ( LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState ) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_list, container, false);
 
-
         adapter = new ListDialogAdapter();
         adapter.getmPublishSubject()
                 .subscribe(data -> onMemoItemClickListener.onMemoItemClickListener(data)); //전달받은 데이터 보내줌. 이거 걍 스트링

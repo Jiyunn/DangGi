@@ -8,10 +8,16 @@
     <string name = "menu_setting">설정</string>
     <string name = "menu_share">공유</string>
     <string name = "menu_check">확인</string>
+    <string name = "menu_delete">삭제</string>
     
     <string name = "config_memo">보여질 메모</string>
     <string name = "text_color">글자 색</string>
     <string name = "background_color">배경 색</string>
     <string name = "sort">정렬</string>
     <string name = "ask_choose">선택해주세요</string>
+    
+    <array name="menus">
+        <item>@string/menu_delete</item>
+        <item>@string/menu_share</item>
+    </array>
 </resources>

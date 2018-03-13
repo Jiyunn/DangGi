@@ -3,12 +3,7 @@
       xmlns:android="http://schemas.android.com/apk/res/android">
 
       
-    <item
-        android:title="@string/menu_share"
-        android:id="@+id/menu_share"
-        android:icon="@drawable/ic_share_24dp"
-        app:showAsAction="always"/>
-    
+   
     <item
         android:title="@string/menu_setting"
         android:id="@+id/menu_setting"

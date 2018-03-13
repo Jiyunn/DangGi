@@ -31,7 +31,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     private AppWidgetManager appWidgetManager;
     private int mAppWidgetId;
     private DataHelper mDbHelper;
-    private ListDialogFragment dialog = new ListDialogFragment();
+    private ListDialogFragment dialog;
     private RemoteViews views;
     private Memo selectedItem;
 
@@ -43,7 +43,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
 
         initToolbar();
         setResult(RESULT_CANCELED);
-
+        dialog = new ListDialogFragment();
         mAppWidgetId = getWidgetIdFromIntent();
 
         views = new RemoteViews(this.getPackageName(), R.layout.widget_memo);
