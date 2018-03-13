@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -83,7 +85,7 @@ public class WriteActivity extends AppCompatActivity {
      * @param memoText
      * @return
      */
-    private boolean editMemo ( String memoText ) {
+    private  void editMemo ( String memoText ) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             ContentValues values = new ContentValues();
             values.put(DataHelper.DataEntry.COLUMN_NAME_CONTENT, memoText);
@@ -92,11 +94,9 @@ public class WriteActivity extends AppCompatActivity {
             String[] selectionArgs = { String.valueOf(oldItem.getId()) };
 
             db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
-            return true;
         } catch ( SQLException e ) {
             e.printStackTrace();
         }
-        return false;
     }
 
     /**
@@ -130,9 +130,9 @@ public class WriteActivity extends AppCompatActivity {
             Cursor cursor = db.query(
                     DataHelper.DataEntry.TABLE_WIDGET,
                     new String[]{ DataHelper.DataEntry.COLUMN_NAME_WIDGETID },
-                    selection, selectionArgs, null, null, null         );
+                    selection, selectionArgs, null, null, null);
 
-            if (cursor.getCount() >0) {
+            if ( cursor.getCount() > 0 ) {
                 cursor.moveToFirst();
                 do { //돌면서 일치하는 위젯 아이디를 리스트에 넣음.
                     int widgetId = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_WIDGETID));
@@ -148,36 +148,51 @@ public class WriteActivity extends AppCompatActivity {
         return null;
     }
 
-    @Override
-    public void onBackPressed () {
+    private void saveEditedMemo () {
         String editedContent = binding.editMemo.getText().toString(); //새로 입력한 문자열
 
         if ( editedContent.trim().length() == 0 )
-            super.onBackPressed();
+            onBackPressed();
 
         else if ( binding.getObj() != null ) {
-            if ( editMemo(editedContent) ) {
-                Toast.makeText(getApplicationContext(), getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
-                Memo editedItem = Memo.of(oldItem.getId(), editedContent, new Date(System.currentTimeMillis()));
+            editMemo(editedContent);
+            Toast.makeText(getApplicationContext(), getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
+            Memo editedItem = Memo.of(oldItem.getId(), editedContent, new Date(System.currentTimeMillis()));
 
-                sendBroadcastToWidget(checkAddedWidget(editedItem.getId()), editedItem);
+            sendBroadcastToWidget(checkAddedWidget(editedItem.getId()), editedItem);
 
-                Intent intent = new Intent();
-                intent.putExtra("oldItem", oldItem);
-                intent.putExtra("editedItem", editedItem); //데이터 전달.
-                setResult(RESULT_OK, intent);
-            }
+            Intent intent = new Intent();
+            intent.putExtra("oldItem", oldItem);
+            intent.putExtra("editedItem", editedItem); //데이터 전달.
+            setResult(RESULT_OK, intent);
+
         } else {
             saveMemo(editedContent);
             Toast.makeText(getApplicationContext(), getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    @Override
+    public void onBackPressed () {
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu ( Menu menu ) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_write, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected ( MenuItem item ) {
         switch ( item.getItemId() ) {
-            case android.R.id.home:
+            case R.id.menu_check:
+                saveEditedMemo();
+                onBackPressed();
+                return true;
+            case android.R.id.home :
                 onBackPressed();
                 return true;
         }
