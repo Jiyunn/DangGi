@@ -2,6 +2,7 @@ package me.jy.danggi.provider;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -58,15 +59,24 @@ public class NormalWidget extends AppWidgetProvider {
     public void onDeleted ( Context context, int[] appWidgetIds ) {
         final int N = appWidgetIds.length;
         mDbHelper = new DataHelper(context);
-        try (SQLiteDatabase db = mDbHelper.getWritableDatabase()) {
-            String selection = DataHelper.DataEntry.COLUMN_NAME_WIDGETID + " LIKE ?";
+        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
+            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
 
             for ( int i = 0; i < N; i++ ) {
                 String[] selectionArgs = { String.valueOf(appWidgetIds[ i ]) };
-                db.delete(DataHelper.DataEntry.TABLE_WIDGET, selection, selectionArgs);
+
+                ContentValues values = new ContentValues();
+                values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, -1);
+                values.put(DataHelper.DataEntry.COLUMN_TEXT_COLOR, "");
+                values.put(DataHelper.DataEntry.COLUMN_BACKGROUND, "");
+                values.put(DataHelper.DataEntry.COLUMN_GRAVITY, "");
+
+                db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
             }
+
             mDbHelper.close();
-        } catch ( SQLiteException e ) {
+        } catch ( SQLiteException e )
+        {
             e.printStackTrace();
         }
         super.onDeleted(context, appWidgetIds);

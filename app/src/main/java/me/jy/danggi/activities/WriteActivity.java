@@ -69,7 +69,7 @@ public class WriteActivity extends AppCompatActivity {
             return true;
         try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
             ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_NAME_CONTENT, memoText);
+            values.put(DataHelper.DataEntry.COLUMN_CONTENT, memoText);
             db.insert(DataHelper.DataEntry.TABLE_MEMO, null, values); //return primary key (long type)
             return true;
 
@@ -88,7 +88,7 @@ public class WriteActivity extends AppCompatActivity {
     private  void editMemo ( String memoText ) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_NAME_CONTENT, memoText);
+            values.put(DataHelper.DataEntry.COLUMN_CONTENT, memoText);
 
             String selection = DataHelper.DataEntry._ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(oldItem.getId()) };
@@ -124,18 +124,18 @@ public class WriteActivity extends AppCompatActivity {
         List<Integer> widgetIdList = new ArrayList<>(); //위젯 아이디 저장
 
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String selection = DataHelper.DataEntry.COLUMN_NAME_MEMOID + " LIKE ?";
+            String selection = DataHelper.DataEntry._ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(itemId) };
 
             Cursor cursor = db.query(
-                    DataHelper.DataEntry.TABLE_WIDGET,
-                    new String[]{ DataHelper.DataEntry.COLUMN_NAME_WIDGETID },
+                    DataHelper.DataEntry.TABLE_MEMO,
+                    new String[]{ DataHelper.DataEntry.COLUMN_WIDGET_ID },
                     selection, selectionArgs, null, null, null);
 
             if ( cursor.getCount() > 0 ) {
                 cursor.moveToFirst();
                 do { //돌면서 일치하는 위젯 아이디를 리스트에 넣음.
-                    int widgetId = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_WIDGETID));
+                    int widgetId = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_WIDGET_ID));
                     widgetIdList.add(widgetId);
 
                 } while ( cursor.moveToNext() );

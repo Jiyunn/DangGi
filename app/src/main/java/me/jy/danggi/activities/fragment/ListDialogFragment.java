@@ -87,18 +87,18 @@ public class ListDialogFragment extends DialogFragment {
     private void getMemoData () {
         mDbHelper = new DataHelper(getActivity());
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sortOrder = DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
+        String sortOrder = DataHelper.DataEntry.COLUMN_WRITE_DATE + " DESC";
 
         Cursor cursor = db.query(
                 DataHelper.DataEntry.TABLE_MEMO,
                 new String[]{
                         DataHelper.DataEntry._ID ,
-                        DataHelper.DataEntry.COLUMN_NAME_CONTENT },
+                        DataHelper.DataEntry.COLUMN_CONTENT },
                 null, null, null, null, sortOrder);
 
         while ( cursor.moveToNext() ) {
             int id = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry._ID));
-            String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_CONTENT));
+            String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_CONTENT));
 
             adapter.updateDataSet(new Memo(id, content));
         }
