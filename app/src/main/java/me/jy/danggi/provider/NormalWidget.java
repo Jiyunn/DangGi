@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.widget.RemoteViews;
@@ -46,6 +47,11 @@ public class NormalWidget extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_memo);
             views.setTextViewText(R.id.text_widget, item.getContent());
 
+            SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetId), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("content", item.getContent());
+            editor.commit();
+
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
@@ -67,11 +73,13 @@ public class NormalWidget extends AppWidgetProvider {
 
                 ContentValues values = new ContentValues();
                 values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, -1);
-                values.put(DataHelper.DataEntry.COLUMN_TEXT_COLOR, "");
-                values.put(DataHelper.DataEntry.COLUMN_BACKGROUND, "");
-                values.put(DataHelper.DataEntry.COLUMN_GRAVITY, "");
 
                 db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
+
+                SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetIds[i]), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.clear();
+                editor.commit();
             }
 
             mDbHelper.close();

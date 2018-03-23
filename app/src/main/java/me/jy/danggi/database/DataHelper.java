@@ -18,11 +18,8 @@ public class DataHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + DataEntry.TABLE_MEMO + " (" +
                     DataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     DataEntry.COLUMN_CONTENT + " TEXT," +
-                    DataEntry.COLUMN_WRITE_DATE + " DATETIME DEFAULT (STRFTIME('%Y-%m-%d %H:%M', 'NOW', 'localtime')),  " +
-                    DataEntry.COLUMN_WIDGET_ID + " INTEGER UNIQUE, " +
-                    DataEntry.COLUMN_TEXT_COLOR + " TEXT, " +
-                    DataEntry.COLUMN_BACKGROUND + " TEXT,  " +
-                    DataEntry.COLUMN_GRAVITY + " TEXT)";
+                    DataEntry.COLUMN_WRITE_DATE + " DATETIME DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'localtime')),  " +
+                    DataEntry.COLUMN_WIDGET_ID + " INTEGER UNIQUE)";
 
     private static final String SQL_DELETE_MEMO_ENTRIES =
             "DROP TABLE IF EXISTS " + DataEntry.TABLE_MEMO;
@@ -47,8 +44,5 @@ public class DataHelper extends SQLiteOpenHelper {
         public static final String COLUMN_CONTENT = "content";
         public static final String COLUMN_WRITE_DATE = "writeDate";
         public static final String COLUMN_WIDGET_ID = "widgetId";
-        public static final String COLUMN_TEXT_COLOR = "textColor";
-        public static final String COLUMN_GRAVITY = "gravity";
-        public static final String COLUMN_BACKGROUND = "background";
     }
 }
