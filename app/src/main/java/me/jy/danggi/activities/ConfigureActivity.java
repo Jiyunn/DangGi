@@ -63,25 +63,24 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     private void getWidgetDataFromDB () {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
 
-            String selection = DataHelper.DataEntry.COLUMN_NAME_WIDGETID + " LIKE ?";
+            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(mAppWidgetId) };
 
             Cursor cursor = db.query(
-                    DataHelper.DataEntry.TABLE_WIDGET,
+                    DataHelper.DataEntry.TABLE_MEMO,
                     new String[]{
-                            DataHelper.DataEntry.COLUMN_NAME_WIDGETID ,
-                            DataHelper.DataEntry.COLUMN_NAME_MEMOID ,
-                            DataHelper.DataEntry.COLUMN_NAME_TEXT_COLOR ,
-                            DataHelper.DataEntry.COLUMN_NAME_BACKGROUND ,
-                            DataHelper.DataEntry.COLUMN_NAME_GRAVITY
+                            DataHelper.DataEntry.COLUMN_WIDGET_ID ,
+                            DataHelper.DataEntry.COLUMN_TEXT_COLOR ,
+                            DataHelper.DataEntry.COLUMN_BACKGROUND ,
+                            DataHelper.DataEntry.COLUMN_GRAVITY
                     },
                     selection, selectionArgs, null, null, null);
 
             cursor.moveToFirst();
 
-            String textColor = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_TEXT_COLOR));
-            String background = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_BACKGROUND));
-            String gravity = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_GRAVITY));
+            String textColor = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_TEXT_COLOR));
+            String background = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_BACKGROUND));
+            String gravity = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_GRAVITY));
 
             binding.textSelectTextColor.setText(textColor);
             binding.textSelectBackgroundColor.setText(background);
@@ -185,10 +184,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         switch ( item.getItemId() ) {
             case R.id.menu_check:
                 if ( selectedItem != null ) {
-                    if ( checkWidgetTable() ) //이미 등록 된 아이디가 있다면 위젯 테이블 내용 수정.
-                        updateIntoWidgetTable(selectedItem.getId());
-                    else //없으면 새로운 데이터 등록
-                        insertIntoWidgetTable(selectedItem.getId());
+                    updateWidgetData(selectedItem.getId()); //Memo테이블 업데이트.
 
                     Intent resultValue = new Intent(this, NormalWidget.class);
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -202,7 +198,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     }
 
     /**
-     * 위젯 테이블에 현재 위젯 아이디가 등록되있는지 검사
+     * 현재 위젯 아이디를 가진 데이터가 있는지 검사
      *
      * @param
      */
@@ -210,13 +206,13 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         int cursorCount;
 
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String selection = DataHelper.DataEntry.COLUMN_NAME_WIDGETID + " LIKE ?";
+            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(mAppWidgetId) };
 
             Cursor cursor = db.query(
-                    DataHelper.DataEntry.TABLE_WIDGET,
+                    DataHelper.DataEntry.TABLE_MEMO,
                     new String[]{
-                            DataHelper.DataEntry.COLUMN_NAME_WIDGETID
+                            DataHelper.DataEntry.COLUMN_WIDGET_ID
                     },
                     selection, selectionArgs, null, null, null);
 
@@ -233,41 +229,22 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     }
 
     /**
-     * 위젯 정보 삽입
-     * @param itemId
-     */
-    private void insertIntoWidgetTable ( int itemId ) { //홈화면에 등록된 위젯의 정보 테이블에 삽입.
-        try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
-            ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_NAME_WIDGETID, mAppWidgetId);
-            values.put(DataHelper.DataEntry.COLUMN_NAME_MEMOID, itemId);
-            values.put(DataHelper.DataEntry.COLUMN_NAME_TEXT_COLOR, binding.textSelectTextColor.getText().toString());
-            values.put(DataHelper.DataEntry.COLUMN_NAME_BACKGROUND, binding.textSelectBackgroundColor.getText().toString());
-            values.put(DataHelper.DataEntry.COLUMN_NAME_GRAVITY, binding.textSelectGravity.getText().toString());
-
-            db.insert(DataHelper.DataEntry.TABLE_WIDGET, null, values);
-        } catch ( SQLException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 위젯 정보 업데이트
+     * 메모테이블에 담긴 위젯 정보 업데이트
      *
      * @param itemId
      */
-    private void updateIntoWidgetTable ( int itemId ) {
+    private void updateWidgetData (int itemId) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_NAME_MEMOID, itemId);
-            values.put(DataHelper.DataEntry.COLUMN_NAME_TEXT_COLOR, binding.textSelectTextColor.getText().toString());
-            values.put(DataHelper.DataEntry.COLUMN_NAME_BACKGROUND, binding.textSelectBackgroundColor.getText().toString());
-            values.put(DataHelper.DataEntry.COLUMN_NAME_GRAVITY, binding.textSelectGravity.getText().toString());
+            values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, mAppWidgetId);
+            values.put(DataHelper.DataEntry.COLUMN_TEXT_COLOR, binding.textSelectTextColor.getText().toString());
+            values.put(DataHelper.DataEntry.COLUMN_BACKGROUND, binding.textSelectBackgroundColor.getText().toString());
+            values.put(DataHelper.DataEntry.COLUMN_GRAVITY, binding.textSelectGravity.getText().toString());
 
-            String selection = DataHelper.DataEntry.COLUMN_NAME_WIDGETID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
+            String selection = DataHelper.DataEntry._ID + " LIKE ?";
+            String[] selectionArgs = { String.valueOf(itemId) };
 
-            db.update(DataHelper.DataEntry.TABLE_WIDGET, values, selection, selectionArgs);
+            db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
         } catch ( SQLiteException e ) {
             e.printStackTrace();
         }

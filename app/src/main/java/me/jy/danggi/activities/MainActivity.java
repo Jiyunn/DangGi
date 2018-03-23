@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import me.jy.danggi.R;
 import me.jy.danggi.activities.adapter.MemoAdapter;
@@ -130,14 +129,14 @@ public class MainActivity extends AppCompatActivity {
     private void getMemoData () {
         mDbHelper = new DataHelper(this);
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String sortOrder = DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE + " DESC";
+            String sortOrder = DataHelper.DataEntry.COLUMN_WRITE_DATE + " DESC";
 
             Cursor cursor = db.query(
                     DataHelper.DataEntry.TABLE_MEMO,
                     new String[]{
                             DataHelper.DataEntry._ID ,
-                            DataHelper.DataEntry.COLUMN_NAME_CONTENT ,
-                            DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
+                            DataHelper.DataEntry.COLUMN_CONTENT ,
+                            DataHelper.DataEntry.COLUMN_WRITE_DATE },
                     null, null, null, null, sortOrder);
 
             if ( adapter.getItemCount() == 0 ) { //어댑터에 등록된 데이터가 없는 경우
@@ -156,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Memo getDataFromDB ( Cursor cursor ) {
         int id = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry._ID));
-        String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_CONTENT));
-        Date writtenDate = convertDateFormat(cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE)));
+        String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_CONTENT));
+        Date writtenDate = convertDateFormat(cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_WRITE_DATE)));
 
         return Memo.of(id, content, writtenDate);
     }
@@ -165,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Date convertDateFormat ( String dateTime ) { //데이터베이스에 저장된 String을 다시 Date로 ? 이것도 꽤 비효율적인듯
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
         try {
             return dateFormat.parse(dateTime);
         } catch ( ParseException e ) {
