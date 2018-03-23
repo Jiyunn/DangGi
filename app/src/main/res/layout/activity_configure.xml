@@ -5,7 +5,6 @@
     >
     
     <data>
-        
         <variable
             name = "activity"
             type = "me.jy.danggi.activities.ConfigureActivity"
@@ -20,14 +19,12 @@
         <android.support.v7.widget.Toolbar
             android:id = "@+id/toolbar_setting"
             style = "@style/ToolbarStyle"
-            app:titleTextAppearance="@style/ToolbarTitleTextStyle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toTopOf = "parent"
             app:title = "위젯설정"
+            app:titleTextAppearance = "@style/ToolbarTitleTextStyle"
             />
-            
-        
         
         <GridLayout
             android:layout_width = "0dp"
@@ -42,50 +39,57 @@
             >
             
             <TextView
-                style="@style/ConfigureMenuTextStyle"
+                style = "@style/ConfigureMenuTextStyle"
                 android:text = "@string/config_memo"
                 />
             
             <TextView
-                android:id="@+id/text_select_memo"
-                style="@style/ConfigureContentTextStyle"
-                android:onClick="@{activity::onSelectMemoClick}"
+                android:id = "@+id/text_select_memo"
+                style = "@style/ConfigureContentTextStyle"
                 android:hint = "@string/ask_choose"
+                android:onClick = "@{activity::onSelectTextsClick}"
                 />
-    
+            
             <TextView
-                style="@style/ConfigureMenuTextStyle"
+                style = "@style/ConfigureMenuTextStyle"
+                android:gravity = "center"
                 android:text = "@string/text_color"
-                android:gravity="center"
                 />
-    
+            
             <TextView
-                android:id="@+id/text_select_text_color"
-                style="@style/ConfigureContentTextStyle"
+                android:id = "@+id/text_select_text_color"
+                style = "@style/ConfigureContentTextStyle"
                 android:hint = "@string/ask_choose"
+                android:text="@string/color_white"
+                android:onClick = "@{activity::onSelectTextsClick}"
                 />
-    
+            
             <TextView
-                style="@style/ConfigureMenuTextStyle"
+                style = "@style/ConfigureMenuTextStyle"
+                android:gravity = "center"
                 android:text = "@string/background_color"
-                android:gravity="center"
                 />
-    
+            
             <TextView
-                android:id="@+id/text_select_background_color"
-                style="@style/ConfigureContentTextStyle"
+                android:id = "@+id/text_select_background_color"
+                style = "@style/ConfigureContentTextStyle"
                 android:hint = "@string/ask_choose"
+                android:text="@string/color_dangGi"
+                android:onClick = "@{activity::onSelectTextsClick}"
                 />
+            
             <TextView
-                style="@style/ConfigureMenuTextStyle"
+                style = "@style/ConfigureMenuTextStyle"
+                android:gravity = "center"
                 android:text = "@string/sort"
-                android:gravity="center"
                 />
-    
+            
             <TextView
-                android:id="@+id/text_select_sort"
-                style="@style/ConfigureContentTextStyle"
+                android:id = "@+id/text_select_gravity"
+                style = "@style/ConfigureContentTextStyle"
                 android:hint = "@string/ask_choose"
+                android:text="@string/gravity_left"
+                android:onClick = "@{activity::onSelectTextsClick}"
                 />
         
         </GridLayout>
