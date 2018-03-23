@@ -59,7 +59,6 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         mDbHelper = new DataHelper(this);
 
     }
-
     @Override
     protected void onStop () {
         super.onStop();
@@ -81,7 +80,6 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         binding.textSelectBackgroundColor.setText(sharedPref.getString("background", getString(R.string.color_dangGi)));
         binding.textSelectGravity.setText(sharedPref.getString("gravity", getString(R.string.gravity_left)));
     }
-
     /**
      * 선택 된 위젯 아이디 가져오기
      *
@@ -96,7 +94,6 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         }
         return -1;
     }
-
     /**
      * 펜딩 인텐트 객체 생성
      *
@@ -179,13 +176,12 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         switch ( item.getItemId() ) {
             case R.id.menu_check:
                 if ( binding.textSelectMemo.getText() != null ) {//설정한 메모가 존재할 경우.
-                    if ( selectedItem != null ) {//새로운 메모를 선택했으면
+                    if ( selectedItem != null ) {//새로운 메모를 선택한 경우
                         if ( isIdStoredWidgetTable() )
-                            updateWidgetData(selectedItem.getId()); //Memo테이블 업데이트.
+                            updateWidgetData(selectedItem.getId());
                         else
                             insertWidgetData(selectedItem.getId());
                     }
-
                     Intent resultValue = new Intent(this, NormalWidget.class);
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     setResult(RESULT_OK, resultValue);
