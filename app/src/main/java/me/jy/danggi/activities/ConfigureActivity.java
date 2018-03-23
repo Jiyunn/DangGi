@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.databinding.DataBindingUtil;
@@ -83,6 +84,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
 
     /**
      * 선택 된 위젯 아이디 가져오기
+     *
      * @return
      */
     private int getWidgetIdFromIntent () {
@@ -177,36 +179,76 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         switch ( item.getItemId() ) {
             case R.id.menu_check:
                 if ( binding.textSelectMemo.getText() != null ) {//설정한 메모가 존재할 경우.
-                    if ( selectedItem!=null )  //새로운 메모를 선택했으면,
-                        updateWidgetData(selectedItem.getId()); //Memo테이블 업데이트.
-
-                        Intent resultValue = new Intent(this, NormalWidget.class);
-                        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                        setResult(RESULT_OK, resultValue);
-                        appWidgetManager.updateAppWidget(mAppWidgetId, views);
-                        finish();
+                    if ( selectedItem != null ) {//새로운 메모를 선택했으면
+                        if ( isIdStoredWidgetTable() )
+                            updateWidgetData(selectedItem.getId()); //Memo테이블 업데이트.
+                        else
+                            insertWidgetData(selectedItem.getId());
                     }
 
+                    Intent resultValue = new Intent(this, NormalWidget.class);
+                    resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                    setResult(RESULT_OK, resultValue);
+                    appWidgetManager.updateAppWidget(mAppWidgetId, views);
+                    finish();
+                }
                 return true;
         }
         return false;
     }
 
     /**
-     * 메모테이블에 담긴 위젯 정보 업데이트
+     * 위젯 테이블에 현재 위젯의 아이디가 있는지 검사
+     *
+     * @return
+     */
+    private boolean isIdStoredWidgetTable ( ) {
+        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
+            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
+            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
+
+            Cursor cursor = db.query(DataHelper.DataEntry.TABLE_WIDGET,
+                    new String[]{ DataHelper.DataEntry.COLUMN_WIDGET_ID }, selection, selectionArgs, null, null, null);
+
+            if ( cursor.getCount() > 0 )
+                return true;
+        } catch ( SQLiteException e ) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 위젯테이블에 담긴 메모아이디 업데이트
      *
      * @param itemId
      */
     private void updateWidgetData ( int itemId ) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             ContentValues values = new ContentValues();
+            values.put(DataHelper.DataEntry.COLUMN_MEMO_ID, itemId);
+
+            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
+            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
+
+            db.update(DataHelper.DataEntry.TABLE_WIDGET, values, selection, selectionArgs);
+        } catch ( SQLiteException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 위젯 테이블에 메모id, 위젯id 추가
+     * @param itemId
+     */
+    private void insertWidgetData(int itemId) {
+        try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
+            ContentValues values = new ContentValues();
+            values.put(DataHelper.DataEntry.COLUMN_MEMO_ID, itemId);
             values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, mAppWidgetId);
 
-            String selection = DataHelper.DataEntry._ID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(itemId) };
-
-            db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
-        } catch ( SQLiteException e ) {
+            db.insert(DataHelper.DataEntry.TABLE_WIDGET , null, values);
+        }catch ( SQLiteException e ){
             e.printStackTrace();
         }
     }

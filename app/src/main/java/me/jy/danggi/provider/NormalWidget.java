@@ -2,7 +2,6 @@ package me.jy.danggi.provider;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,6 +49,7 @@ public class NormalWidget extends AppWidgetProvider {
             SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetId), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("content", item.getContent());
+            editor.apply();
             editor.commit();
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -67,21 +67,18 @@ public class NormalWidget extends AppWidgetProvider {
         mDbHelper = new DataHelper(context);
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
-
             for ( int i = 0; i < N; i++ ) {
-                String[] selectionArgs = { String.valueOf(appWidgetIds[ i ]) };
+                int appWidgetId = appWidgetIds[i];
 
-                ContentValues values = new ContentValues();
-                values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, -1);
-
-                db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
+                String[] selectionArgs = { String.valueOf(appWidgetId)};
+                db.delete(DataHelper.DataEntry.TABLE_WIDGET, selection, selectionArgs);
 
                 SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetIds[i]), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.clear();
+                editor.apply();
                 editor.commit();
             }
-
             mDbHelper.close();
         } catch ( SQLiteException e )
         {
