@@ -5,9 +5,9 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.databinding.DataBindingUtil;
@@ -21,8 +21,8 @@ import android.widget.RemoteViews;
 
 import me.jy.danggi.R;
 import me.jy.danggi.activities.fragment.ListDialogFragment;
-import me.jy.danggi.databinding.ActivityConfigureBinding;
 import me.jy.danggi.database.DataHelper;
+import me.jy.danggi.databinding.ActivityConfigureBinding;
 import me.jy.danggi.model.Memo;
 import me.jy.danggi.provider.NormalWidget;
 
@@ -49,6 +49,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         dialog = new ListDialogFragment();
 
         mAppWidgetId = getWidgetIdFromIntent();
+        getWidgetSettingFromSharedPreferences(); //SharedPreference에 저장된 값 가져와 설정.
 
         views = new RemoteViews(this.getPackageName(), R.layout.widget_memo);
         views.setOnClickPendingIntent(R.id.linear_widget, getPendingIntent()); //펜딩인텐트 설정
@@ -56,43 +57,35 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         appWidgetManager = AppWidgetManager.getInstance(ConfigureActivity.this);
         mDbHelper = new DataHelper(this);
 
-        if ( checkWidgetTable() ) //현재 위젯의 아이디가 테이블에 있는지 검사하고, 있으면 데이터 불러옴.
-            getWidgetDataFromDB();
     }
 
-    private void getWidgetDataFromDB () {
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
+    @Override
+    protected void onStop () {
+        super.onStop();
+        SharedPreferences sharedPref = getSharedPreferences(String.valueOf(mAppWidgetId), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
 
-            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
-
-            Cursor cursor = db.query(
-                    DataHelper.DataEntry.TABLE_MEMO,
-                    new String[]{
-                            DataHelper.DataEntry.COLUMN_WIDGET_ID ,
-                            DataHelper.DataEntry.COLUMN_TEXT_COLOR ,
-                            DataHelper.DataEntry.COLUMN_BACKGROUND ,
-                            DataHelper.DataEntry.COLUMN_GRAVITY
-                    },
-                    selection, selectionArgs, null, null, null);
-
-            cursor.moveToFirst();
-
-            String textColor = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_TEXT_COLOR));
-            String background = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_BACKGROUND));
-            String gravity = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_GRAVITY));
-
-            binding.textSelectTextColor.setText(textColor);
-            binding.textSelectBackgroundColor.setText(background);
-            binding.textSelectGravity.setText(gravity);
-            cursor.close();
-
-        } catch ( SQLiteException e ) {
-            e.printStackTrace();
-        }
+        editor.putString("content", binding.textSelectMemo.getText().toString());
+        editor.putString("textColor", binding.textSelectTextColor.getText().toString());
+        editor.putString("background", binding.textSelectBackgroundColor.getText().toString());
+        editor.putString("gravity", binding.textSelectGravity.getText().toString());
+        editor.commit();
     }
 
-    private int getWidgetIdFromIntent () { //클릭 된 위젯 아이디 가져오기
+    private void getWidgetSettingFromSharedPreferences () {
+        SharedPreferences sharedPref = this.getSharedPreferences(String.valueOf(mAppWidgetId), Context.MODE_PRIVATE);
+
+        binding.textSelectMemo.setText(sharedPref.getString("content", getString(R.string.ask_choose)));
+        binding.textSelectTextColor.setText(sharedPref.getString("textColor", getString(R.string.color_white)));
+        binding.textSelectBackgroundColor.setText(sharedPref.getString("background", getString(R.string.color_dangGi)));
+        binding.textSelectGravity.setText(sharedPref.getString("gravity", getString(R.string.gravity_left)));
+    }
+
+    /**
+     * 선택 된 위젯 아이디 가져오기
+     * @return
+     */
+    private int getWidgetIdFromIntent () {
         Bundle extras = getIntent().getExtras();
         if ( extras != null ) {
             return extras.getInt(
@@ -176,54 +169,25 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         dialog.dismiss();
         selectedItem = item; //위젯에 보여지기로 선택된 아이템
         binding.textSelectMemo.setText(item.getContent());
-        views.setTextViewText(R.id.text_widget, item.getContent());
+        views.setTextViewText(R.id.text_widget, item.getContent()); //RemoteView에 텍스트 설정
     }
 
     @Override
     public boolean onOptionsItemSelected ( MenuItem item ) {
         switch ( item.getItemId() ) {
             case R.id.menu_check:
-                if ( selectedItem != null ) {
-                    updateWidgetData(selectedItem.getId()); //Memo테이블 업데이트.
+                if ( binding.textSelectMemo.getText() != null ) {//설정한 메모가 존재할 경우.
+                    if ( selectedItem!=null )  //새로운 메모를 선택했으면,
+                        updateWidgetData(selectedItem.getId()); //Memo테이블 업데이트.
 
-                    Intent resultValue = new Intent(this, NormalWidget.class);
-                    resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    setResult(RESULT_OK, resultValue);
-                    appWidgetManager.updateAppWidget(mAppWidgetId, views);
-                    finish();
-                }
+                        Intent resultValue = new Intent(this, NormalWidget.class);
+                        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                        setResult(RESULT_OK, resultValue);
+                        appWidgetManager.updateAppWidget(mAppWidgetId, views);
+                        finish();
+                    }
+
                 return true;
-        }
-        return false;
-    }
-
-    /**
-     * 현재 위젯 아이디를 가진 데이터가 있는지 검사
-     *
-     * @param
-     */
-    private boolean checkWidgetTable () {
-        int cursorCount;
-
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
-
-            Cursor cursor = db.query(
-                    DataHelper.DataEntry.TABLE_MEMO,
-                    new String[]{
-                            DataHelper.DataEntry.COLUMN_WIDGET_ID
-                    },
-                    selection, selectionArgs, null, null, null);
-
-            cursor.moveToFirst();
-            cursorCount = cursor.getCount(); //조회된 데이터의 개수를 셈
-            cursor.close();
-
-            if ( cursorCount > 0 )
-                return true;
-        } catch ( SQLException e ) {
-            e.printStackTrace();
         }
         return false;
     }
@@ -233,13 +197,10 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
      *
      * @param itemId
      */
-    private void updateWidgetData (int itemId) {
+    private void updateWidgetData ( int itemId ) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             ContentValues values = new ContentValues();
             values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, mAppWidgetId);
-            values.put(DataHelper.DataEntry.COLUMN_TEXT_COLOR, binding.textSelectTextColor.getText().toString());
-            values.put(DataHelper.DataEntry.COLUMN_BACKGROUND, binding.textSelectBackgroundColor.getText().toString());
-            values.put(DataHelper.DataEntry.COLUMN_GRAVITY, binding.textSelectGravity.getText().toString());
 
             String selection = DataHelper.DataEntry._ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(itemId) };
