@@ -70,7 +70,7 @@ public class WriteActivity extends AppCompatActivity {
         try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
             ContentValues values = new ContentValues();
             values.put(DataHelper.DataEntry.COLUMN_CONTENT, memoText);
-            db.insert(DataHelper.DataEntry.TABLE_MEMO, null, values); //return primary key (long type)
+            db.insert(DataHelper.DataEntry.TABLE_MEMO, null, values);
             return true;
 
         } catch ( SQLException e ) {
@@ -123,12 +123,12 @@ public class WriteActivity extends AppCompatActivity {
     private List<Integer> checkAddedWidget ( int itemId ) {
         List<Integer> widgetIdList = new ArrayList<>(); //위젯 아이디 저장
 
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String selection = DataHelper.DataEntry._ID + " LIKE ?";
+        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) { //수정된 메모가 등록된 위젯들이 있는지 검사
+            String selection = DataHelper.DataEntry.COLUMN_MEMO_ID + " LIKE ?";
             String[] selectionArgs = { String.valueOf(itemId) };
 
             Cursor cursor = db.query(
-                    DataHelper.DataEntry.TABLE_MEMO,
+                    DataHelper.DataEntry.TABLE_WIDGET,
                     new String[]{ DataHelper.DataEntry.COLUMN_WIDGET_ID },
                     selection, selectionArgs, null, null, null);
 
