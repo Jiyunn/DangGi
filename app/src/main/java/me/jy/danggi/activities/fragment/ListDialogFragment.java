@@ -93,8 +93,7 @@ public class ListDialogFragment extends DialogFragment {
                 DataHelper.DataEntry.TABLE_MEMO,
                 new String[]{
                         DataHelper.DataEntry._ID ,
-                        DataHelper.DataEntry.COLUMN_NAME_CONTENT ,
-                        DataHelper.DataEntry.COLUMN_NAME_WRITE_DATE },
+                        DataHelper.DataEntry.COLUMN_NAME_CONTENT },
                 null, null, null, null, sortOrder);
 
         while ( cursor.moveToNext() ) {

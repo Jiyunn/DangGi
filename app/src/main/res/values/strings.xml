@@ -16,8 +16,46 @@
     <string name = "sort">정렬</string>
     <string name = "ask_choose">선택해주세요</string>
     
+    <string name = "color_dangGi">당기색</string>
+    <string name = "color_white">흰색</string>
+    <string name = "color_black">검정</string>
+    
+    <string name = "gravity_left">왼쪽</string>
+    <string name = "gravity_center">가운데</string>
+    <string name = "gravity_right">오른쪽</string>
+    
     <array name="menus">
         <item>@string/menu_delete</item>
         <item>@string/menu_share</item>
     </array>
+    
+    <string-array name = "widget_gravities">
+        <item>@string/gravity_left</item>
+        <item>@string/gravity_center</item>
+        <item>@string/gravity_right</item>
+    </string-array>
+    
+    <string-array name = "widget_text_colors">
+        <item>@string/color_dangGi</item>
+        <item>@string/color_white</item>
+        <item>@string/color_black</item>
+    </string-array>
+    
+    <string-array name = "widget_background_colors">
+        <item>@string/color_dangGi</item>
+        <item>@string/color_white</item>
+        <item>@string/color_black</item>
+    </string-array>
+    
+    <integer-array name = "values_color">
+        <item>@color/colorPrimaryDark</item>
+        <item>@android:color/white</item>
+        <item>@android:color/black</item>
+    </integer-array>
+    
+    <integer-array name = "values_gravity">
+        <item>3</item>
+        <item>17</item>
+        <item>5</item>
+    </integer-array>
 </resources>

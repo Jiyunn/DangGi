@@ -17,8 +17,11 @@ public class DataHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_WIDGET_ENTRIES =
             "CREATE TABLE " + DataEntry.TABLE_WIDGET + " (" +
                     DataEntry._ID+ " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    DataEntry.COLUMN_NAME_MEMOID + " INTEGER," +
-                    DataEntry.COLUMN_NAME_WIDGETID+ " INTEGER UNIQUE)";
+                    DataEntry.COLUMN_NAME_MEMOID + " INTEGER, " +
+                    DataEntry.COLUMN_NAME_WIDGETID+ " INTEGER UNIQUE, " +
+                    DataEntry.COLUMN_NAME_TEXT_COLOR+ " TEXT, " +
+                    DataEntry.COLUMN_NAME_BACKGROUND+ " TEXT,  " +
+                    DataEntry.COLUMN_NAME_GRAVITY+" TEXT  )";
 
     private static final String SQL_CREATE_MEMO_ENTRIES =
             "CREATE TABLE " + DataEntry.TABLE_MEMO + " (" +
@@ -32,10 +35,8 @@ public class DataHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_WIDGET_ENTRIES =
             "DROP TABLE IF EXISTS " + DataEntry.TABLE_WIDGET;
 
-
     public DataHelper ( Context context ) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
     }
 
     @Override
@@ -59,5 +60,8 @@ public class DataHelper extends SQLiteOpenHelper {
         public static final String TABLE_WIDGET = "widget";
         public static final String COLUMN_NAME_MEMOID= "memoId";
         public static final String COLUMN_NAME_WIDGETID="widgetId";
+        public static final String COLUMN_NAME_TEXT_COLOR= "textColor";
+        public static final String COLUMN_NAME_GRAVITY ="gravity";
+        public static final String COLUMN_NAME_BACKGROUND="background";
     }
 }
