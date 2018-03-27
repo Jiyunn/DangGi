@@ -22,7 +22,7 @@ import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.FragmentDialogListBinding;
 import me.jy.danggi.model.Memo;
 
-/**
+/** Dialog fragment for  memo
  * Created by JY on 2018-02-27.
  */
 
@@ -34,7 +34,7 @@ public class ListDialogFragment extends DialogFragment {
 
     OnMemoItemClickListener onMemoItemClickListener;
 
-    FragmentDialogListBinding binding;
+    private FragmentDialogListBinding binding;
     private SQLiteOpenHelper mDbHelper;
     private ListDialogAdapter adapter;
 
@@ -65,9 +65,9 @@ public class ListDialogFragment extends DialogFragment {
                 .subscribe(data -> onMemoItemClickListener.onMemoItemClickListener(data)); //전달받은 데이터 보내줌. 이거 걍 스트링
         getMemoData();
 
-        binding.recyclerviewDialog.setAdapter(adapter);
-        binding.recyclerviewDialog.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.recyclerviewDialog.setHasFixedSize(true);
+        binding.recyclerDialog.setAdapter(adapter);
+        binding.recyclerDialog.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.recyclerDialog.setHasFixedSize(true);
 
         return binding.getRoot();
     }

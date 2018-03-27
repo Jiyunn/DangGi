@@ -15,33 +15,27 @@ import me.jy.danggi.R;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.model.Memo;
 
-/**
+/** provider class for widget
  * Created by JY on 2018-01-22.
  */
 
 public class NormalWidget extends AppWidgetProvider {
 
-    private DataHelper mDbHelper;
-
     @Override
     public void onReceive ( Context context, Intent intent ) {
         super.onReceive(context, intent);
 
-        if ( intent.getAction().equals("android.appwidget.action.APPWIDGET_UPDATE") ) {
+        if ( intent.getAction()!=null && intent.getAction().equals("android.appwidget.action.APPWIDGET_UPDATE") ) {
             Memo item = (Memo)intent.getSerializableExtra("item");
             List<Integer> widgetIds = intent.getIntegerArrayListExtra("widgetIds");
 
             if ( item != null && widgetIds != null )
                 updateWidget(context, AppWidgetManager.getInstance(context), widgetIds, item);
-
         }
     }
 
     private void updateWidget ( Context context, AppWidgetManager appWidgetManager, List<Integer> appWidgetIds, Memo item ) {
-        final int N = appWidgetIds.size();
-
-        for ( int i = 0; i < N; i++ ) {
-            int appWidgetId = appWidgetIds.get(i);
+        for ( int appWidgetId : appWidgetIds ) {
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_memo);
             views.setTextViewText(R.id.text_widget, item.getContent());
@@ -63,17 +57,16 @@ public class NormalWidget extends AppWidgetProvider {
 
     @Override
     public void onDeleted ( Context context, int[] appWidgetIds ) {
-        final int N = appWidgetIds.length;
-        mDbHelper = new DataHelper(context);
+        DataHelper mDbHelper = new DataHelper(context);
+
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
             String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
-            for ( int i = 0; i < N; i++ ) {
-                int appWidgetId = appWidgetIds[i];
 
+            for ( int appWidgetId : appWidgetIds) {
                 String[] selectionArgs = { String.valueOf(appWidgetId)};
                 db.delete(DataHelper.DataEntry.TABLE_WIDGET, selection, selectionArgs);
 
-                SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetIds[i]), Context.MODE_PRIVATE);
+                SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetId), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.clear();
                 editor.apply();

@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
-/**
+/**SQLite DataHelper class
  * Created by JY on 2018-01-19.
  */
 
@@ -18,7 +18,7 @@ public class DataHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + DataEntry.TABLE_MEMO + " (" +
                     DataEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     DataEntry.COLUMN_CONTENT + " TEXT," +
-                    DataEntry.COLUMN_WRITE_DATE + " DATETIME DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW', 'localtime')))";
+                    DataEntry.COLUMN_WRITE_DATE + " DATETIME DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'NOW', 'localtime')))";
 
     private static final String SQL_CREATE_WIDGET_ENTRIES =
             "CREATE TABLE " + DataEntry.TABLE_WIDGET + " (" +

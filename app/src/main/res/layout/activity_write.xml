@@ -10,11 +10,7 @@
             name = "activity"
             type = "me.jy.danggi.activities.WriteActivity"
             />
-        
-        <variable
-            name = "obj"
-            type = "me.jy.danggi.model.Memo"
-            />
+  
     </data>
     
     <android.support.constraint.ConstraintLayout
@@ -37,6 +33,7 @@
             android:id = "@+id/edit_memo"
             android:labelFor="@+id/edit_memo"
             android:layout_width = "0dp"
+            android:inputType="text"
             android:layout_height = "0dp"
             android:background="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -45,7 +42,6 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar_write"
             android:gravity = "top"
             android:padding = "@dimen/basic_margin"
-            android:text = "@{obj.content}"
             android:textColor = "@android:color/black"
             android:textSize = "16sp"
             />
