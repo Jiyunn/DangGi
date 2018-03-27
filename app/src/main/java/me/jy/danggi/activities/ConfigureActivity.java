@@ -29,7 +29,7 @@ import me.jy.danggi.provider.NormalWidget;
 
 public class ConfigureActivity extends AppCompatActivity implements ListDialogFragment.OnMemoItemClickListener {
 
-    ActivityConfigureBinding binding;
+    private ActivityConfigureBinding binding;
 
     private AppWidgetManager appWidgetManager;
     private int mAppWidgetId;
@@ -50,7 +50,8 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         dialog = new ListDialogFragment();
 
         mAppWidgetId = getWidgetIdFromIntent();
-        getWidgetSettingFromSharedPreferences(); //SharedPreference에 저장된 값 가져와 설정.
+
+        getWidgetSettingFromSharedPreferences(); //SharedPreference 저장된 값 가져와 설정.
 
         views = new RemoteViews(this.getPackageName(), R.layout.widget_memo);
         views.setOnClickPendingIntent(R.id.linear_widget, getPendingIntent()); //펜딩인텐트 설정
@@ -69,6 +70,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         editor.putString("textColor", binding.textSelectTextColor.getText().toString());
         editor.putString("background", binding.textSelectBackgroundColor.getText().toString());
         editor.putString("gravity", binding.textSelectGravity.getText().toString());
+        editor.apply();
         editor.commit();
     }
 
@@ -83,7 +85,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     /**
      * 선택 된 위젯 아이디 가져오기
      *
-     * @return
+     * @return if widget id  doesn't exists, return -1.
      */
     private int getWidgetIdFromIntent () {
         Bundle extras = getIntent().getExtras();
@@ -97,7 +99,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     /**
      * 펜딩 인텐트 객체 생성
      *
-     * @return
+     * @return PendingIntent instance
      */
     private PendingIntent getPendingIntent () {
         Intent intent = new Intent(getApplicationContext(), ConfigureActivity.class);
@@ -108,9 +110,9 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     }
 
     /**
-     * xml의 각 텍스트 뷰를 클릭했을 때, 다이얼로그를 만드는 메소드
+     *  각 텍스트 뷰를 클릭했을 때, 다이얼로그를 만드는 메소드
      *
-     * @param v
+     * @param v  widget option textView
      */
     public void onSelectTextsClick ( View v ) {
         int id = v.getId();
@@ -134,9 +136,9 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     /**
      * 배경, 글자색, 정렬을 선택하고 변경하는 다이얼로그 생성
      *
-     * @param keyArrayId
-     * @param valueArrayId
-     * @return
+     * @param keyArrayId key values
+     * @param valueArrayId values
+     * @return Dialog instance which is created depending on keyArrayId.
      */
     private Dialog createSelectDialog ( int keyArrayId, int valueArrayId ) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -168,7 +170,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         dialog.dismiss();
         selectedItem = item; //위젯에 보여지기로 선택된 아이템
         binding.textSelectMemo.setText(item.getContent());
-        views.setTextViewText(R.id.text_widget, item.getContent()); //RemoteView에 텍스트 설정
+        views.setTextViewText(R.id.text_widget, item.getContent()); //텍스트 설정
     }
 
     @Override
@@ -196,7 +198,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     /**
      * 위젯 테이블에 현재 위젯의 아이디가 있는지 검사
      *
-     * @return
+     * @return true if widgetId is stored in db, false if not.
      */
     private boolean isIdStoredWidgetTable ( ) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
@@ -206,8 +208,10 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
             Cursor cursor = db.query(DataHelper.DataEntry.TABLE_WIDGET,
                     new String[]{ DataHelper.DataEntry.COLUMN_WIDGET_ID }, selection, selectionArgs, null, null, null);
 
-            if ( cursor.getCount() > 0 )
+            if ( cursor.getCount() > 0 ) {
+                cursor.close();
                 return true;
+            }
         } catch ( SQLiteException e ) {
             e.printStackTrace();
         }
@@ -215,9 +219,9 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     }
 
     /**
-     * 위젯테이블에 담긴 메모아이디 업데이트
+     * update memo's id in  widget table.
      *
-     * @param itemId
+     * @param itemId  updated id
      */
     private void updateWidgetData ( int itemId ) {
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
@@ -234,8 +238,8 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     }
 
     /**
-     * 위젯 테이블에 메모id, 위젯id 추가
-     * @param itemId
+     * insert  memo's id  into widget table
+     * @param itemId inserted id
      */
     private void insertWidgetData(int itemId) {
         try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {

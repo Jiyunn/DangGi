@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
+/**Data Binding conversion methods
  * Created by JY on 2018-02-07.
  */
 

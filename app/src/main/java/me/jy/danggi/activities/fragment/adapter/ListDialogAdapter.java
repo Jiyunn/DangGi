@@ -15,7 +15,7 @@ import me.jy.danggi.R;
 import me.jy.danggi.databinding.ItemDialogListBinding;
 import me.jy.danggi.model.Memo;
 
-/**
+/**Adapter class for memo list
  * Created by JY on 2018-02-27.
  */
 
@@ -55,9 +55,10 @@ public class ListDialogAdapter extends RecyclerView.Adapter<ListDialogAdapter.Li
         return mPublishSubject;
     }
 
+
     static class ListDialogViewHolder extends RecyclerView.ViewHolder {
 
-        ItemDialogListBinding binding;
+        private ItemDialogListBinding binding;
 
         private ListDialogViewHolder ( View itemView ) {
             super(itemView);
@@ -65,9 +66,9 @@ public class ListDialogAdapter extends RecyclerView.Adapter<ListDialogAdapter.Li
         }
 
         Observable<Memo> getClickObservable ( Memo item ) {
-            return Observable.create(emitter -> {
-                itemView.setOnClickListener(view -> emitter.onNext(item));
-            });
+            return Observable.create(emitter ->
+                    itemView.setOnClickListener(view -> emitter.onNext(item))
+            );
         }
     }
 }

@@ -33,4 +33,5 @@ public class Memo implements Serializable{
         this.id = id;
         this.content = content;
     }
+
 }

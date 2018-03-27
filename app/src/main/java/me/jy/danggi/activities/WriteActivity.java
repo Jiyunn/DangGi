@@ -14,9 +14,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import me.jy.danggi.R;
 import me.jy.danggi.database.DataHelper;
@@ -26,7 +28,7 @@ import me.jy.danggi.provider.NormalWidget;
 
 public class WriteActivity extends AppCompatActivity {
 
-    ActivityWriteBinding binding;
+    private ActivityWriteBinding binding;
     private DataHelper mDbHelper;
     private Memo oldItem;
 
@@ -36,76 +38,28 @@ public class WriteActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write);
         binding.setActivity(this);
 
+        mDbHelper = new DataHelper(this);
         initToolbar();
 
-        if ( getIntent() != null ) { //수정모드일경우.
+        if ( getIntent() != null && getIntent().getSerializableExtra("item") != null ) { //수정모드일경우에는 인텐트에 올드메모객체가 따라옴.
             oldItem = (Memo)getIntent().getSerializableExtra("item");
-            binding.setObj(oldItem);
+            binding.editMemo.setText(oldItem.getContent());
         }
-
-        mDbHelper = new DataHelper(this);
-    }
-
-    @Override
-    protected void onDestroy () { //액티비티를 종료할 때 헬퍼닫음
-        super.onDestroy();
-        if ( mDbHelper != null )
-            mDbHelper.close();
     }
 
     private void initToolbar () {
         setSupportActionBar(binding.toolbarWrite);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if ( getSupportActionBar() != null )
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
-     * DB에 등록
+     * 변경된 데이터를 위젯에게 브로드캐스트보냄.
      *
-     * @param memoText
-     * @return
+     * @param widgetIds be sent widget id
+     * @param item be sent memo
      */
-    private boolean saveMemo ( String memoText ) {
-        if ( memoText.trim().length() == 0 )
-            return true;
-        try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
-            ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_CONTENT, memoText);
-            db.insert(DataHelper.DataEntry.TABLE_MEMO, null, values);
-            return true;
-
-        } catch ( SQLException e ) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * DB수정
-     *
-     * @param memoText
-     * @return
-     */
-    private  void editMemo ( String memoText ) {
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_CONTENT, memoText);
-
-            String selection = DataHelper.DataEntry._ID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(oldItem.getId()) };
-
-            db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
-        } catch ( SQLException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 변경된 데이터를 보냄.
-     *
-     * @param widgetIds
-     * @param item
-     */
-    private void sendBroadcastToWidget ( List<Integer> widgetIds, Memo item ) {
+    private void sendBroadcastToWidget (List<Integer> widgetIds, Memo item ) {
         if ( widgetIds.size() > 0 ) {
             Intent updateIntent = new Intent(this, NormalWidget.class);
             updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -118,9 +72,9 @@ public class WriteActivity extends AppCompatActivity {
     /**
      * 위젯 테이블의 데이터를 읽어 내용이 변경된 항목이 위젯에 추가되어있는지 검사함.
      *
-     * @return
+     * @return widget id list
      */
-    private List<Integer> checkAddedWidget ( int itemId ) {
+    private List<Integer> getAddedWidgetIds ( int itemId ) {
         List<Integer> widgetIdList = new ArrayList<>(); //위젯 아이디 저장
 
         try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) { //수정된 메모가 등록된 위젯들이 있는지 검사
@@ -140,6 +94,7 @@ public class WriteActivity extends AppCompatActivity {
 
                 } while ( cursor.moveToNext() );
             }
+            cursor.close();
             return widgetIdList; //위젯 아이디리스트 리턴.
 
         } catch ( SQLException e ) {
@@ -148,34 +103,68 @@ public class WriteActivity extends AppCompatActivity {
         return null;
     }
 
-    private void saveEditedMemo () {
-        String editedContent = binding.editMemo.getText().toString(); //새로 입력한 문자열
+    /**
+     * 입력한 메모를 update / insert 할 것인지 정하는 메소드.
+     */
+    private void saveMemo () {
+        String content = binding.editMemo.getText().toString(); //사용자가 입력한 문자
 
-        if ( editedContent.trim().length() == 0 )
+        if ( content.length() == 0 ) //아무것도 입력하지 않고 확인메뉴를 누른경우.
             onBackPressed();
 
-        else if ( binding.getObj() != null ) {
-            editMemo(editedContent);
-            Toast.makeText(getApplicationContext(), getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
-            Memo editedItem = Memo.of(oldItem.getId(), editedContent, new Date(System.currentTimeMillis()));
+        else if ( oldItem != null ) { //수정모드
+            Memo editedItem = Memo.of(oldItem.getId(), content, new Date(System.currentTimeMillis())); //수정된 아이템에 해당하는 객체를 생성.
+            updateMemoIntoDB(editedItem);
 
-            sendBroadcastToWidget(checkAddedWidget(editedItem.getId()), editedItem);
+            Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
+
+            sendBroadcastToWidget(getAddedWidgetIds(editedItem.getId()), editedItem); //브로드캐스트 전송
 
             Intent intent = new Intent();
             intent.putExtra("oldItem", oldItem);
-            intent.putExtra("editedItem", editedItem); //데이터 전달.
             setResult(RESULT_OK, intent);
 
-        } else {
-            saveMemo(editedContent);
-            Toast.makeText(getApplicationContext(), getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
+        } else { //등록모드
+            insertMemoIntoDB(content);
+            setResult(RESULT_OK, new Intent());
+            Toast.makeText(this, getString(R.string.save_complete), Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    @Override
-    public void onBackPressed () {
-        super.onBackPressed();
+    /**
+     * *update content, write date in memo table
+     *
+     * @param item be updated
+     */
+    private void updateMemoIntoDB ( Memo item ) {
+        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
+            ContentValues values = new ContentValues();
+            values.put(DataHelper.DataEntry.COLUMN_CONTENT, item.getContent());
+            values.put(DataHelper.DataEntry.COLUMN_WRITE_DATE, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREAN).format(item.getWriteDate()));
+
+            String selection = DataHelper.DataEntry._ID + " LIKE ?";
+            String[] selectionArgs = { String.valueOf(oldItem.getId()) };
+
+            db.update(DataHelper.DataEntry.TABLE_MEMO, values, selection, selectionArgs);
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     ** insert content into memo table
+     * @param content be inserted
+     */
+    private void insertMemoIntoDB ( String content ) {
+        try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
+            ContentValues values = new ContentValues();
+            values.put(DataHelper.DataEntry.COLUMN_CONTENT, content);
+
+            db.insert(DataHelper.DataEntry.TABLE_MEMO, null, values);
+
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -189,13 +178,20 @@ public class WriteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected ( MenuItem item ) {
         switch ( item.getItemId() ) {
             case R.id.menu_check:
-                saveEditedMemo();
+                saveMemo();
                 onBackPressed();
                 return true;
-            case android.R.id.home :
+            case android.R.id.home:
                 onBackPressed();
                 return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        if ( mDbHelper != null )
+            mDbHelper.close();
     }
 }
