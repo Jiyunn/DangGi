@@ -33,7 +33,7 @@
             android:id = "@+id/edit_memo"
             android:labelFor="@+id/edit_memo"
             android:layout_width = "0dp"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:layout_height = "0dp"
             android:background="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"

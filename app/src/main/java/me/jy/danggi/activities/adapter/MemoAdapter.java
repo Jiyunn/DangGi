@@ -51,7 +51,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
         return ( dataSet != null ? dataSet.size() : 0 );
     }
 
-
     public void updateDataSet ( List<Memo> dataSet ) {
         this.dataSet = dataSet;
         notifyDataSetChanged();

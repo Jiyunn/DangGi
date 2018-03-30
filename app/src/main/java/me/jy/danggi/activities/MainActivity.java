@@ -36,20 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private DataHelper mDbHelper;
     private List<Memo> memoItems;
 
-    private final int EDIT_CODE = 0;
-    private final int ADD_CODE = 1;
+    private final int UPDATE_CODE = 0;
 
     @Override
     protected void onActivityResult ( int requestCode, int resultCode, Intent data ) {
-        if ( resultCode == RESULT_OK ) {
-            switch ( requestCode ) {
-                case EDIT_CODE: //수정 모드
-                    Memo memo = (Memo)data.getSerializableExtra("'oldItem");
-                    memoItems.remove(memo);
-                    break;
-                case ADD_CODE:
-                    break;
-            }
+        if ( resultCode == RESULT_OK  && requestCode == UPDATE_CODE) {
             memoItems.add(0, getRecentMemoFromDB());
             adapter.notifyDataSetChanged();
             binding.recyclerviewMain.smoothScrollToPosition(0);
@@ -66,11 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         initToolbar();
         initRecyclerView();
-    }
-
-    @Override
-    protected void onStart () {
-        super.onStart();
         adapter.updateDataSet(getAllMemoFromDB()); //테이블에서 데이터 읽어와 어댑터에 등록
     }
 
@@ -103,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
                         case 0:
                             memoItems.remove(item);
                             adapter.notifyDataSetChanged();
+                            binding.recyclerviewMain.smoothScrollToPosition(0);
                             deleteMemoFromDB(item);
                             break;
                         case 1:
@@ -136,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
     private void goToWriteToEdit ( Memo item ) {
         Intent intent = new Intent(getApplicationContext(), WriteActivity.class);
         intent.putExtra("item", item);
-        startActivityForResult(intent, EDIT_CODE);
+        memoItems.remove(item); //사용되지 않을 아이템 삭제
+        startActivityForResult(intent, UPDATE_CODE);
     }
 
     /**
@@ -249,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onFabBtnClick ( View v ) { //플로팅버튼클릭
-        startActivityForResult(new Intent(getApplicationContext(), WriteActivity.class), ADD_CODE);
+        startActivityForResult(new Intent(getApplicationContext(), WriteActivity.class), UPDATE_CODE);
     }
 
     @Override

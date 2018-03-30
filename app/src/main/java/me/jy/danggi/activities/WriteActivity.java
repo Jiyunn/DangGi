@@ -116,14 +116,10 @@ public class WriteActivity extends AppCompatActivity {
             Memo editedItem = Memo.of(oldItem.getId(), content, new Date(System.currentTimeMillis())); //수정된 아이템에 해당하는 객체를 생성.
             updateMemoIntoDB(editedItem);
 
+            setResult(RESULT_OK, new Intent());
             Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show();
 
             sendBroadcastToWidget(getAddedWidgetIds(editedItem.getId()), editedItem); //브로드캐스트 전송
-
-            Intent intent = new Intent();
-            intent.putExtra("oldItem", oldItem);
-            setResult(RESULT_OK, intent);
-
         } else { //등록모드
             insertMemoIntoDB(content);
             setResult(RESULT_OK, new Intent());
