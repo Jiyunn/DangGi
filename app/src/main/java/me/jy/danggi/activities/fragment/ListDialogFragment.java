@@ -2,9 +2,6 @@ package me.jy.danggi.activities.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,15 +11,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 
 import me.jy.danggi.R;
 import me.jy.danggi.activities.fragment.adapter.ListDialogAdapter;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.FragmentDialogListBinding;
 import me.jy.danggi.model.Memo;
+import me.jy.danggi.task.MemoAsyncTask;
 
-/** Dialog fragment for  memo
+/**
+ * Dialog fragment for  memo
  * Created by JY on 2018-02-27.
  */
 
@@ -32,12 +30,9 @@ public class ListDialogFragment extends DialogFragment {
         void onMemoItemClickListener ( Memo item );
     }
 
-    OnMemoItemClickListener onMemoItemClickListener;
+    private OnMemoItemClickListener onMemoItemClickListener;
 
     private FragmentDialogListBinding binding;
-    private SQLiteOpenHelper mDbHelper;
-    private ListDialogAdapter adapter;
-
 
     @Override
     public void onAttach ( Context context ) {
@@ -49,60 +44,35 @@ public class ListDialogFragment extends DialogFragment {
         }
     }
 
-    @Override
-    public void onDetach () {
-        super.onDetach();
-        mDbHelper.close();
-    }
-
     @Nullable
     @Override
-    public View onCreateView ( LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState ) {
+    public View onCreateView ( @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState ) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_list, container, false);
+        initRecyclerView();
 
-        adapter = new ListDialogAdapter();
-        adapter.getmPublishSubject()
-                .subscribe(data -> onMemoItemClickListener.onMemoItemClickListener(data)); //전달받은 데이터 보내줌. 이거 걍 스트링
-        getMemoData();
+        return binding.getRoot();
+    }
+
+    private void initRecyclerView () {
+        ListDialogAdapter adapter = new ListDialogAdapter();
+        adapter.getClickSubject()
+                .subscribe(data -> onMemoItemClickListener.onMemoItemClickListener(data)); //전달받은 데이터 보내줌.
 
         binding.recyclerDialog.setAdapter(adapter);
         binding.recyclerDialog.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.recyclerDialog.setHasFixedSize(true);
 
-        return binding.getRoot();
+        new MemoAsyncTask(getActivity(), adapter).execute(DataHelper.Task.GET_ALL.getValue());
+
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog ( Bundle savedInstanceState ) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setTitle(getString(R.string.ask_choose));
 
         return dialog;
     }
 
-    /***
-     * get Data from  Memo Table
-     */
-    private void getMemoData () {
-        mDbHelper = new DataHelper(getActivity());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String sortOrder = DataHelper.DataEntry.COLUMN_WRITE_DATE + " DESC";
-
-        Cursor cursor = db.query(
-                DataHelper.DataEntry.TABLE_MEMO,
-                new String[]{
-                        DataHelper.DataEntry._ID ,
-                        DataHelper.DataEntry.COLUMN_CONTENT },
-                null, null, null, null, sortOrder);
-
-        while ( cursor.moveToNext() ) {
-            int id = cursor.getInt(cursor.getColumnIndex(DataHelper.DataEntry._ID));
-            String content = cursor.getString(cursor.getColumnIndex(DataHelper.DataEntry.COLUMN_CONTENT));
-
-            adapter.updateDataSet(new Memo(id, content));
-        }
-        cursor.close();
-        db.close();
-    }
 }
