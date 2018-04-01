@@ -10,7 +10,7 @@ import java.util.Locale;
  * Created by JY on 2018-02-07.
  */
 
-public class BindingConverts {
+class BindingConverts {
 
     @BindingConversion
     public static String convertDate(Date date) {

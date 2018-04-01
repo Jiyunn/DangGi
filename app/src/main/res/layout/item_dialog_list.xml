@@ -16,7 +16,6 @@
         android:layout_width = "250dp"
         android:layout_height = "50dp"
         android:layout_marginBottom = "0.3dp"
-        android:background = "@color/colorStatus"
         android:padding = "@dimen/item_padding"
         >
         
@@ -25,8 +24,7 @@
             android:layout_height = "wrap_content"
             android:maxLines = "1"
             android:text = "@{object.content}"
-            android:textColor = "@android:color/white"
-            android:textSize = "16sp"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toBottomOf = "parent"
             app:layout_constraintEnd_toEndOf = "parent"
             app:layout_constraintStart_toStartOf = "parent"

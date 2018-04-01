@@ -4,13 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +22,7 @@ import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityConfigureBinding;
 import me.jy.danggi.model.Memo;
 import me.jy.danggi.provider.NormalWidget;
+import me.jy.danggi.task.WidgetAsyncTask;
 
 public class ConfigureActivity extends AppCompatActivity implements ListDialogFragment.OnMemoItemClickListener {
 
@@ -33,12 +30,12 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
 
     private AppWidgetManager appWidgetManager;
     private int mAppWidgetId;
-    private DataHelper mDbHelper;
+    private DataHelper mDataHelper;
     private ListDialogFragment dialog;
     private RemoteViews views;
     private Memo selectedItem;
 
-    @Override
+     @Override
     protected void onCreate ( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_configure);
@@ -57,7 +54,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         views.setOnClickPendingIntent(R.id.linear_widget, getPendingIntent()); //펜딩인텐트 설정
 
         appWidgetManager = AppWidgetManager.getInstance(ConfigureActivity.this);
-        mDbHelper = new DataHelper(this);
+        mDataHelper = new DataHelper(this);
 
     }
     @Override
@@ -179,10 +176,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
             case R.id.menu_check:
                 if ( binding.textSelectMemo.getText() != null ) {//설정한 메모가 존재할 경우.
                     if ( selectedItem != null ) {//새로운 메모를 선택한 경우
-                        if ( isIdStoredWidgetTable() )
-                            updateWidgetData(selectedItem.getId());
-                        else
-                            insertWidgetData(selectedItem.getId());
+                            new WidgetAsyncTask(this, selectedItem.getId(), mAppWidgetId).execute(DataHelper.Task.SAVE.getValue());
                     }
                     Intent resultValue = new Intent(this, NormalWidget.class);
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -194,65 +188,6 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         }
         return false;
     }
-
-    /**
-     * 위젯 테이블에 현재 위젯의 아이디가 있는지 검사
-     *
-     * @return true if widgetId is stored in db, false if not.
-     */
-    private boolean isIdStoredWidgetTable ( ) {
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
-
-            Cursor cursor = db.query(DataHelper.DataEntry.TABLE_WIDGET,
-                    new String[]{ DataHelper.DataEntry.COLUMN_WIDGET_ID }, selection, selectionArgs, null, null, null);
-
-            if ( cursor.getCount() > 0 ) {
-                cursor.close();
-                return true;
-            }
-        } catch ( SQLiteException e ) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * update memo's id in  widget table.
-     *
-     * @param itemId  updated id
-     */
-    private void updateWidgetData ( int itemId ) {
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_MEMO_ID, itemId);
-
-            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
-            String[] selectionArgs = { String.valueOf(mAppWidgetId) };
-
-            db.update(DataHelper.DataEntry.TABLE_WIDGET, values, selection, selectionArgs);
-        } catch ( SQLiteException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * insert  memo's id  into widget table
-     * @param itemId inserted id
-     */
-    private void insertWidgetData(int itemId) {
-        try ( SQLiteDatabase db = mDbHelper.getWritableDatabase() ) {
-            ContentValues values = new ContentValues();
-            values.put(DataHelper.DataEntry.COLUMN_MEMO_ID, itemId);
-            values.put(DataHelper.DataEntry.COLUMN_WIDGET_ID, mAppWidgetId);
-
-            db.insert(DataHelper.DataEntry.TABLE_WIDGET , null, values);
-        }catch ( SQLiteException e ){
-            e.printStackTrace();
-        }
-    }
-
     private void initToolbar () {
         setSupportActionBar(binding.toolbarSetting);
     }
@@ -260,8 +195,8 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     @Override
     protected void onDestroy () { //액티비티를 종료할 때 헬퍼닫음
         super.onDestroy();
-        if ( mDbHelper != null )
-            mDbHelper.close();
+        if ( mDataHelper != null )
+            mDataHelper.close();
     }
 
     @Override

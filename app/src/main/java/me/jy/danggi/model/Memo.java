@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
+/** Memo class
  * Created by JY on 2018-01-12.
  */
 @Data

@@ -5,8 +5,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.widget.RemoteViews;
 
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.List;
 import me.jy.danggi.R;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.model.Memo;
+import me.jy.danggi.task.WidgetAsyncTask;
 
 /** provider class for widget
  * Created by JY on 2018-01-22.
@@ -57,14 +56,11 @@ public class NormalWidget extends AppWidgetProvider {
 
     @Override
     public void onDeleted ( Context context, int[] appWidgetIds ) {
-        DataHelper mDbHelper = new DataHelper(context);
-
-        try ( SQLiteDatabase db = mDbHelper.getReadableDatabase() ) {
-            String selection = DataHelper.DataEntry.COLUMN_WIDGET_ID + " LIKE ?";
+        DataHelper mDataHelper = new DataHelper(context);
 
             for ( int appWidgetId : appWidgetIds) {
-                String[] selectionArgs = { String.valueOf(appWidgetId)};
-                db.delete(DataHelper.DataEntry.TABLE_WIDGET, selection, selectionArgs);
+
+                new WidgetAsyncTask(context, appWidgetId).execute(DataHelper.Task.DELETE.getValue());
 
                 SharedPreferences sharedPref = context.getSharedPreferences(String.valueOf(appWidgetId), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
@@ -72,11 +68,8 @@ public class NormalWidget extends AppWidgetProvider {
                 editor.apply();
                 editor.commit();
             }
-            mDbHelper.close();
-        } catch ( SQLiteException e )
-        {
-            e.printStackTrace();
-        }
+            mDataHelper.close();
+
         super.onDeleted(context, appWidgetIds);
     }
 }

@@ -1,65 +1,54 @@
 package me.jy.danggi.activities.adapter;
 
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.jy.danggi.R;
+import me.jy.danggi.common.BasicRecyclerViewAdapter;
 import me.jy.danggi.databinding.ItemMemoBinding;
 import me.jy.danggi.model.Memo;
 
-/** adapter for memo
+
+/**
+ * adapter for memo
  * Created by JY on 2018-01-12.
  */
 
-public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder> {
+public class MemoAdapter extends BasicRecyclerViewAdapter<Memo, MemoAdapter.MemoViewHolder> {
 
-    private List<Memo> dataSet;
     private PublishSubject<Memo> longClickSubject;
     private PublishSubject<Memo> clickSubject;
 
     public MemoAdapter () {
-        this.dataSet = new ArrayList<>();
         this.longClickSubject = PublishSubject.create();
         this.clickSubject = PublishSubject.create();
     }
 
     @Override
-    public MemoViewHolder onCreateViewHolder ( ViewGroup parent, int viewType ) {
+    @NonNull
+    public MemoViewHolder onCreateViewHolder ( @NonNull ViewGroup parent, int viewType ) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_memo, parent, false);
 
         return new MemoViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder ( MemoViewHolder holder, int position ) {
-        Memo memo = dataSet.get(position);
+    public void onBindView ( @NonNull MemoViewHolder holder, int position ) {
+        Memo memo = getItem(position);
         holder.binding.setMemo(memo);
         holder.getLongClickObserver(memo).subscribe(longClickSubject);
         holder.getClickObserver(memo).subscribe(clickSubject);
     }
 
-    @Override
-    public int getItemCount () {
-        return ( dataSet != null ? dataSet.size() : 0 );
-    }
-
-    public void updateDataSet ( List<Memo> dataSet ) {
-        this.dataSet = dataSet;
-        notifyDataSetChanged();
-    }
-
     public PublishSubject<Memo> getLongClickSubject () {
         return longClickSubject;
     }
-
     public PublishSubject<Memo> getClickSubject () {
         return clickSubject;
     }
@@ -76,18 +65,18 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.MemoViewHolder
 
         private Observable<Memo> getClickObserver ( Memo item ) {
             return Observable.create(emitter ->
-                itemView.setOnClickListener(v ->
-                    emitter.onNext(item)
-                )
+                    itemView.setOnClickListener(v ->
+                            emitter.onNext(item)
+                    )
             );
         }
 
         private Observable<Memo> getLongClickObserver ( Memo item ) {
             return Observable.create(emitter ->
-                itemView.setOnLongClickListener(v -> {
-                    emitter.onNext(item);
-                    return true;
-                })
+                    itemView.setOnLongClickListener(v -> {
+                        emitter.onNext(item);
+                        return true;
+                    })
             );
         }
     }
