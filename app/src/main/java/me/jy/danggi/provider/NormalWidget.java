@@ -56,7 +56,7 @@ public class NormalWidget extends AppWidgetProvider {
 
     @Override
     public void onDeleted ( Context context, int[] appWidgetIds ) {
-        DataHelper mDataHelper = new DataHelper(context);
+        DataHelper mDbHelper = new DataHelper(context);
 
             for ( int appWidgetId : appWidgetIds) {
 
@@ -68,7 +68,7 @@ public class NormalWidget extends AppWidgetProvider {
                 editor.apply();
                 editor.commit();
             }
-            mDataHelper.close();
+            mDbHelper.close();
 
         super.onDeleted(context, appWidgetIds);
     }

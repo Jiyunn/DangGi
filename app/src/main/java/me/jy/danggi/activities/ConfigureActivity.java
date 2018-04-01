@@ -30,7 +30,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
 
     private AppWidgetManager appWidgetManager;
     private int mAppWidgetId;
-    private DataHelper mDataHelper;
+    private DataHelper mDbHelper;
     private ListDialogFragment dialog;
     private RemoteViews views;
     private Memo selectedItem;
@@ -54,7 +54,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         views.setOnClickPendingIntent(R.id.linear_widget, getPendingIntent()); //펜딩인텐트 설정
 
         appWidgetManager = AppWidgetManager.getInstance(ConfigureActivity.this);
-        mDataHelper = new DataHelper(this);
+        mDbHelper = new DataHelper(this);
 
     }
     @Override
@@ -195,8 +195,8 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     @Override
     protected void onDestroy () { //액티비티를 종료할 때 헬퍼닫음
         super.onDestroy();
-        if ( mDataHelper != null )
-            mDataHelper.close();
+        if ( mDbHelper != null )
+            mDbHelper.close();
     }
 
     @Override

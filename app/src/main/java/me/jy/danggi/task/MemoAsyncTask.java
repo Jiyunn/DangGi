@@ -24,7 +24,7 @@ import me.jy.danggi.model.Memo;
 public class MemoAsyncTask extends AsyncTask<Integer, Void, Integer> {
 
     private WeakReference<Activity> activityWeakReference;
-    private DataHelper mDataHelper;
+    private DataHelper mDbHelper;
     private BasicRecyclerViewAdapter adapter;
     private List<Memo> memoItems;
     private Memo memo;
@@ -41,8 +41,8 @@ public class MemoAsyncTask extends AsyncTask<Integer, Void, Integer> {
 
     @Override
     protected Integer doInBackground ( Integer... integers ) {
-        if ( mDataHelper ==null)
-            mDataHelper = new DataHelper(activityWeakReference.get());
+        if ( mDbHelper ==null)
+            mDbHelper = new DataHelper(activityWeakReference.get());
 
         int flag = integers[0];
         switch ( flag ) {
@@ -53,13 +53,13 @@ public class MemoAsyncTask extends AsyncTask<Integer, Void, Integer> {
                 memo = getRecentMemoFromDB();
                 return flag;
             case 2:
-                mDataHelper.insertMemo(memo.getContent());
+                mDbHelper.insertMemo(memo.getContent());
                 return flag;
             case 3 :
-                mDataHelper.updateMemo(memo);
+                mDbHelper.updateMemo(memo);
                 return flag;
             case 4 :
-                mDataHelper.deleteMemo(memo.getId());
+                mDbHelper.deleteMemo(memo.getId());
                 return flag;
         }
         return null;
@@ -81,7 +81,7 @@ public class MemoAsyncTask extends AsyncTask<Integer, Void, Integer> {
             case 4 :
                 break;
         }
-        mDataHelper.close();
+        mDbHelper.close();
     }
 
 
@@ -90,7 +90,7 @@ public class MemoAsyncTask extends AsyncTask<Integer, Void, Integer> {
      * @return  recently added memo
      */
     private Memo getRecentMemoFromDB () {
-        try ( Cursor cursor = mDataHelper.getMemoCursor() ) {
+        try ( Cursor cursor = mDbHelper.getMemoCursor() ) {
 
             if ( cursor.getCount() > 0 )
                 cursor.moveToFirst();
@@ -109,7 +109,7 @@ public class MemoAsyncTask extends AsyncTask<Integer, Void, Integer> {
      * @return  memo list
      */
     private List<Memo> getAllMemoFromDB () {
-        try ( Cursor cursor = mDataHelper.getMemoCursor() ) {
+        try ( Cursor cursor = mDbHelper.getMemoCursor() ) {
             memoItems = new ArrayList<>(); //데이터들을 담을 인스턴스 생성
 
             while ( cursor.getCount() > 0 && cursor.moveToNext() ) {
