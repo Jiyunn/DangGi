@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.jy.danggi.R;
-import me.jy.danggi.common.BasicRecyclerViewAdapter;
+import me.jy.danggi.common.BaseRealmRecyclerViewAdapter;
 import me.jy.danggi.databinding.ItemMemoBinding;
 import me.jy.danggi.model.Memo;
 
@@ -20,7 +20,7 @@ import me.jy.danggi.model.Memo;
  * Created by JY on 2018-01-12.
  */
 
-public class MemoAdapter extends BasicRecyclerViewAdapter<Memo, MemoAdapter.MemoViewHolder> {
+public class MemoAdapter extends BaseRealmRecyclerViewAdapter<Memo, MemoAdapter.MemoViewHolder> {
 
     private PublishSubject<Memo> longClickSubject;
     private PublishSubject<Memo> clickSubject;

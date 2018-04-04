@@ -7,7 +7,7 @@
     <data>
         
         <variable
-            name = "object"
+            name = "memo"
             type = "me.jy.danggi.model.Memo"
             />
     </data>
@@ -23,7 +23,7 @@
             android:layout_width = "0dp"
             android:layout_height = "wrap_content"
             android:maxLines = "1"
-            android:text = "@{object.content}"
+            android:text = "@{memo.content}"
             android:textColor="@android:color/black"
             app:layout_constraintBottom_toBottomOf = "parent"
             app:layout_constraintEnd_toEndOf = "parent"
