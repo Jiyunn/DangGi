@@ -12,12 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.realm.Realm;
+import io.realm.Sort;
 import me.jy.danggi.R;
 import me.jy.danggi.activities.fragment.adapter.ListDialogAdapter;
-import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.FragmentDialogListBinding;
 import me.jy.danggi.model.Memo;
-import me.jy.danggi.task.MemoAsyncTask;
 
 /**
  * Dialog fragment for  memo
@@ -33,6 +33,7 @@ public class ListDialogFragment extends DialogFragment {
     private OnMemoItemClickListener onMemoItemClickListener;
 
     private FragmentDialogListBinding binding;
+    private Realm realm;
 
     @Override
     public void onAttach ( Context context ) {
@@ -48,9 +49,19 @@ public class ListDialogFragment extends DialogFragment {
     @Override
     public View onCreateView ( @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState ) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_list, container, false);
+
+        realm = Realm.getDefaultInstance();
+
         initRecyclerView();
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroy () {
+        super.onDestroy();
+        binding.recyclerDialog.setAdapter(null);
+        realm.close();
     }
 
     private void initRecyclerView () {
@@ -61,16 +72,13 @@ public class ListDialogFragment extends DialogFragment {
         binding.recyclerDialog.setAdapter(adapter);
         binding.recyclerDialog.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.recyclerDialog.setHasFixedSize(true);
-
-        new MemoAsyncTask(getActivity(), adapter).execute(DataHelper.Task.GET_ALL.getValue());
-
+        adapter.updateItemList(realm.where(Memo.class).sort("writeDate", Sort.DESCENDING).findAll());
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog ( Bundle savedInstanceState ) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setTitle(getString(R.string.ask_choose));
 
         return dialog;
     }

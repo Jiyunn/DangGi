@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.jy.danggi.R;
-import me.jy.danggi.common.BasicRecyclerViewAdapter;
+import me.jy.danggi.common.BaseRealmRecyclerViewAdapter;
 import me.jy.danggi.databinding.ItemDialogListBinding;
 import me.jy.danggi.model.Memo;
 
@@ -19,7 +19,7 @@ import me.jy.danggi.model.Memo;
  * Created by JY on 2018-02-27.
  */
 
-public class ListDialogAdapter extends BasicRecyclerViewAdapter<Memo, ListDialogAdapter.ListDialogViewHolder> {
+public class ListDialogAdapter extends BaseRealmRecyclerViewAdapter<Memo, ListDialogAdapter.ListDialogViewHolder> {
 
     private PublishSubject<Memo> clickSubject;
 
@@ -30,7 +30,7 @@ public class ListDialogAdapter extends BasicRecyclerViewAdapter<Memo, ListDialog
     @Override
     public void onBindView ( @NonNull ListDialogViewHolder holder, int position ) {
         Memo memo = getItem(position);
-        holder.binding.setObject(memo);
+        holder.binding.setMemo(memo);
         holder.getClickObservable(memo).subscribe(clickSubject);
     }
 

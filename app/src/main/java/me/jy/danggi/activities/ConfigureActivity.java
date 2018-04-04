@@ -16,13 +16,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import io.realm.Realm;
 import me.jy.danggi.R;
 import me.jy.danggi.activities.fragment.ListDialogFragment;
 import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityConfigureBinding;
 import me.jy.danggi.model.Memo;
 import me.jy.danggi.provider.NormalWidget;
-import me.jy.danggi.task.WidgetAsyncTask;
 
 public class ConfigureActivity extends AppCompatActivity implements ListDialogFragment.OnMemoItemClickListener {
 
@@ -30,16 +30,19 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
 
     private AppWidgetManager appWidgetManager;
     private int mAppWidgetId;
-    private DataHelper mDbHelper;
     private ListDialogFragment dialog;
     private RemoteViews views;
     private Memo selectedItem;
+
+   private Realm realm;
 
      @Override
     protected void onCreate ( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_configure);
         binding.setActivity(this);
+
+        realm = Realm.getDefaultInstance();
 
         initToolbar(); //툴바 설정
         setResult(RESULT_CANCELED);
@@ -54,9 +57,12 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         views.setOnClickPendingIntent(R.id.linear_widget, getPendingIntent()); //펜딩인텐트 설정
 
         appWidgetManager = AppWidgetManager.getInstance(ConfigureActivity.this);
-        mDbHelper = new DataHelper(this);
-
     }
+
+    private void initToolbar () {
+        setSupportActionBar(binding.toolbarSetting);
+    }
+
     @Override
     protected void onStop () {
         super.onStop();
@@ -176,7 +182,7 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
             case R.id.menu_check:
                 if ( binding.textSelectMemo.getText() != null ) {//설정한 메모가 존재할 경우.
                     if ( selectedItem != null ) {//새로운 메모를 선택한 경우
-                            new WidgetAsyncTask(this, selectedItem.getId(), mAppWidgetId).execute(DataHelper.Task.SAVE.getValue());
+                        DataHelper.saveWidget(realm, mAppWidgetId, selectedItem.getId()); //위젯 저장
                     }
                     Intent resultValue = new Intent(this, NormalWidget.class);
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -188,21 +194,17 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         }
         return false;
     }
-    private void initToolbar () {
-        setSupportActionBar(binding.toolbarSetting);
-    }
-
-    @Override
-    protected void onDestroy () { //액티비티를 종료할 때 헬퍼닫음
-        super.onDestroy();
-        if ( mDbHelper != null )
-            mDbHelper.close();
-    }
 
     @Override
     public boolean onCreateOptionsMenu ( Menu menu ) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_configure, menu);
         return true;
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        realm.close();
     }
 }
