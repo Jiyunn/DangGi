@@ -8,8 +8,9 @@
         
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.MainActivity"
+            type = "me.jy.danggi.activities.WriteActivity"
             />
+  
     </data>
     
     <android.support.constraint.ConstraintLayout
@@ -19,34 +20,30 @@
         >
         
         <android.support.v7.widget.Toolbar
-            android:id = "@+id/toolbar_main"
+            android:id = "@+id/toolbar_write"
             style = "@style/ToolbarStyle"
             app:titleTextAppearance="@style/ToolbarTitleTextStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:title = "@string/app_name"
+            app:title="@string/app_name"
             />
         
-        <android.support.v7.widget.RecyclerView
-            android:id = "@+id/recyclerview_main"
+        <EditText
+            android:id = "@+id/edit_memo"
+            android:labelFor="@+id/edit_memo"
             android:layout_width = "0dp"
+            android:inputType="textMultiLine"
             android:layout_height = "0dp"
-            app:layout_constraintBottom_toBottomOf = "parent"
-            app:layout_constraintEnd_toEndOf = "parent"
-            app:layout_constraintStart_toStartOf = "parent"
-            app:layout_constraintTop_toBottomOf = "@+id/toolbar_main"
-            />
-        
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:layout_margin = "16dp"
-            android:onClick = "@{activity::onFabBtnClick}"
-            android:src = "@drawable/ic_create_24dp"
-            app:fabSize = "normal"
-            app:layout_constraintBottom_toBottomOf = "parent"
-            app:layout_constraintEnd_toEndOf = "parent"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_write"
+            android:gravity = "top"
+            android:padding = "@dimen/basic_margin"
+            android:textColor = "@android:color/black"
+            android:textSize = "16sp"
             />
     
     </android.support.constraint.ConstraintLayout>
