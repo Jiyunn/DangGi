@@ -9,4 +9,14 @@
         android:id="@+id/menu_setting"
         android:icon="@drawable/ic_settings_24dp"
         app:showAsAction="always"/>
+    
+    <item
+        android:title="@string/menu_video"
+        android:id="@+id/menu_video"
+        app:showAsAction="never"/>
+    
+    <item
+        android:title="@string/menu_text"
+        android:id="@+id/menu_text"
+        app:showAsAction="never"/>
 </menu>

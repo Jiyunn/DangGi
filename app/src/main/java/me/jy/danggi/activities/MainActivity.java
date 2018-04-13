@@ -122,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
         switch ( item.getItemId() ) {
             case R.id.menu_setting:
                 return true;
+            case R.id.menu_video :
+                Intent intent = new Intent(this, VideoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             default:
                 return true;
         }
