@@ -1,50 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android = "http://schemas.android.com/apk/res/android"
-    xmlns:app = "http://schemas.android.com/apk/res-auto"
-    >
+<layout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:app = "http://schemas.android.com/apk/res-auto">
     
     <data>
         
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.WriteActivity"
-            />
-  
+            type = "me.jy.danggi.activities.WriteActivity" />
+    
     </data>
     
     <android.support.constraint.ConstraintLayout
         android:layout_width = "match_parent"
         android:layout_height = "match_parent"
-        android:orientation = "vertical"
-        >
+        android:orientation = "vertical">
         
         <android.support.v7.widget.Toolbar
             android:id = "@+id/toolbar_write"
             style = "@style/ToolbarStyle"
-            app:titleTextAppearance="@style/ToolbarTitleTextStyle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:title="@string/app_name"
-            />
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toTopOf = "parent"
+            app:title = "@string/title_write"
+            app:titleTextAppearance = "@style/ToolbarTitleTextStyle" />
         
         <EditText
             android:id = "@+id/edit_memo"
-            android:labelFor="@+id/edit_memo"
             android:layout_width = "0dp"
-            android:inputType="textMultiLine"
             android:layout_height = "0dp"
-            android:background="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_write"
+            android:background = "@android:color/white"
             android:gravity = "top"
+            android:inputType = "textMultiLine"
+            android:labelFor = "@+id/edit_memo"
             android:padding = "@dimen/basic_margin"
             android:textColor = "@android:color/black"
             android:textSize = "16sp"
-            />
+            app:layout_constraintBottom_toBottomOf = "parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toBottomOf = "@+id/toolbar_write" />
     
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -3,4 +3,5 @@
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="basic_margin">8dp</dimen>
     <dimen name = "item_padding">6dp</dimen>
+    <dimen name = "item_margin">2dp</dimen>
 </resources>

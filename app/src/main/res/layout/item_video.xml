@@ -12,10 +12,9 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width = "match_parent"
         android:layout_height = "110dp"
-        android:layout_marginBottom = "2dp"
+        android:layout_marginBottom = "@dimen/item_margin"
         android:background = "@android:color/white"
         android:padding = "@dimen/item_padding">
-        
         
         <ImageView
             android:id = "@+id/image_item_video"
@@ -30,15 +29,13 @@
         <TextView
             android:id = "@+id/text_item_content"
             android:layout_width = "0dp"
-            android:layout_height = "match_parent"
-            android:gravity = "center_vertical"
-            android:maxLines = "2"
+            android:layout_height = "0dp"
             android:padding = "@dimen/item_padding"
             android:text = "@{video.content}"
             android:textColor = "@android:color/black"
             android:textSize = "16sp"
-            app:layout_constraintBottom_toBottomOf = "parent"
-            app:layout_constraintEnd_toStartOf = "@+id/text_item_date"
+            app:layout_constraintBottom_toTopOf="@+id/text_item_date"
+           app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf = "@+id/image_item_video"
             app:layout_constraintTop_toTopOf = "parent"
             app:layout_constraintVertical_bias = "0" />
@@ -52,7 +49,6 @@
             android:textSize = "12sp"
             app:layout_constraintBottom_toBottomOf = "parent"
             app:layout_constraintEnd_toEndOf = "parent"
-            app:layout_constraintTop_toBottomOf = "@+id/text_item_content"
             app:layout_constraintVertical_bias = "1" />
     
     
