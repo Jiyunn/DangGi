@@ -49,8 +49,6 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
     private lateinit var eventLogger: EventLogger
     private lateinit var mediaDataSourceFactory: DataSource.Factory
 
-
-
     private val bandwidthMeter: DefaultBandwidthMeter = DefaultBandwidthMeter()
     private val realm: Realm = Realm.getDefaultInstance()
     private var uri: Uri? = null
@@ -61,6 +59,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write_video)
         binding.setVariable(BR.activity, this)
 
@@ -68,7 +67,8 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
         mediaDataSourceFactory = buildDataSourceFactory(true)
         initToolbar()
 
-        intent.extras?.let { //수정하는 경우 컨텐츠 정보들 가져옴
+        intent.extras?.let {
+            //수정하는 경우 컨텐츠 정보들 가져옴
             oldId = intent.getIntExtra("itemId", -1)
             val video = DataHelper.findVideoById(realm, oldId)
             uri = Uri.parse(video?.uri)
@@ -76,6 +76,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
             initPlayer()
         }
     }
+
     /**
      * 플레이어 설정
      */
@@ -100,6 +101,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
             mediaDataSourceFactory = DefaultDataSourceFactory(this,
                     Util.getUserAgent(this, "MyApplication"), bandwidthMeter)
         }
+
         val videoSource: MediaSource = ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri)
 
         buildMediaSource(uri, "", mainHandler, eventLogger)

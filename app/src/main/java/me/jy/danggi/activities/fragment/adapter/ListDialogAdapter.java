@@ -19,43 +19,47 @@ import me.jy.danggi.model.Memo;
  * Created by JY on 2018-02-27.
  */
 
-public class ListDialogAdapter extends BaseRealmRecyclerViewAdapter<Memo, ListDialogAdapter.ListDialogViewHolder> {
+public class ListDialogAdapter extends BaseRealmRecyclerViewAdapter<Memo, ListDialogAdapter.ListDialogViewHolder>{
 
     private PublishSubject<Memo> clickSubject;
 
-    public ListDialogAdapter () {
+    public ListDialogAdapter() {
         this.clickSubject = PublishSubject.create();
     }
 
     @Override
-    public void onBindView ( @NonNull ListDialogViewHolder holder, int position ) {
+    public void onBindView( @NonNull ListDialogViewHolder holder , int position ) {
         Memo memo = getItem(position);
+
         holder.binding.setMemo(memo);
         holder.getClickObservable(memo).subscribe(clickSubject);
     }
 
     @Override
     @NonNull
-    public ListDialogViewHolder onCreateViewHolder ( @NonNull ViewGroup parent, int viewType ) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dialog_list, parent, false);
-        return new ListDialogViewHolder(itemView);
+    public ListDialogViewHolder onCreateViewHolder( @NonNull ViewGroup parent , int viewType ) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_dialog_list , parent , false);
 
+        return new ListDialogViewHolder(itemView);
     }
 
-    public PublishSubject<Memo> getClickSubject () {
+    public PublishSubject<Memo> getClickSubject() {
         return clickSubject;
     }
 
-    static class ListDialogViewHolder extends RecyclerView.ViewHolder {
+
+    static class ListDialogViewHolder extends RecyclerView.ViewHolder{
 
         private ItemDialogListBinding binding;
 
-        private ListDialogViewHolder ( View itemView ) {
+        private ListDialogViewHolder( View itemView ) {
             super(itemView);
+
             binding = DataBindingUtil.bind(itemView);
         }
 
-        Observable<Memo> getClickObservable ( Memo item ) {
+        Observable<Memo> getClickObservable( Memo item ) {
             return Observable.create(emitter ->
                     itemView.setOnClickListener(view -> emitter.onNext(item))
             );

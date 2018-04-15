@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import io.reactivex.disposables.Disposable;
 import io.realm.Realm;
 import io.realm.Sort;
 import me.jy.danggi.R;
@@ -21,15 +22,18 @@ import me.jy.danggi.database.DataHelper;
 import me.jy.danggi.databinding.ActivityMainBinding;
 import me.jy.danggi.model.Memo;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
     private Realm realm;
+    private Disposable clickDisposable;
+    private Disposable longClickDisposable;
 
     @Override
-    protected void onCreate ( Bundle savedInstanceState ) {
+    protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        binding = DataBindingUtil.setContentView(this , R.layout.activity_main);
         binding.setActivity(this);
 
         realm = Realm.getDefaultInstance();
@@ -38,23 +42,23 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
     }
 
-    private void initToolbar () {
+    private void initToolbar() {
         setSupportActionBar(binding.toolbarMain);
     }
 
     /**
      * initialize recyclerView
      */
-    private void initRecyclerView () {
+    private void initRecyclerView() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         MemoAdapter adapter = new MemoAdapter();
 
-        adapter.getLongClickSubject()
+        longClickDisposable = adapter.getLongClickSubject()
                 .subscribe(data ->
                         createDialog(data).show()
                 );
 
-        adapter.getClickSubject()
+        clickDisposable = adapter.getClickSubject()
                 .subscribe(this::goToWriteToEdit);
 
         binding.recyclerviewMain.setHasFixedSize(true);
@@ -64,13 +68,14 @@ public class MainActivity extends AppCompatActivity {
         adapter.updateItemList(realm.where(Memo.class).sort("writeDate" , Sort.DESCENDING).findAll());
     }
 
-    private Dialog createDialog ( Memo item ) { //다이얼로그 생성
+    private Dialog createDialog( Memo item ) { //다이얼로그 생성
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        return builder.setTitle(item.getContent().substring(0, item.getContent().length() / 2))
-                .setItems(R.array.menus, ( dialog, which ) -> {
-                    switch ( which ) {
+
+        return builder.setTitle(getString(R.string.ask_choose))
+                .setItems(R.array.menus , ( dialog , which ) -> {
+                    switch (which) {
                         case 0:
-                            DataHelper.deleteMemo(realm, item.getId());
+                            DataHelper.deleteMemo(realm , item.getId());
                             break;
                         case 1:
                             shareItem(item);
@@ -84,15 +89,17 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param item selected memo
      */
-    private void shareItem ( Memo item ) {
+    private void shareItem( Memo item ) {
         Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, item.getContent());
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT , item.getContent());
         sendIntent.setType("text/plain");
 
-        Intent chooser = Intent.createChooser(sendIntent, getString(R.string.menu_share));
+        Intent chooser = Intent.createChooser(sendIntent , getString(R.string.menu_share));
 
-        if ( sendIntent.resolveActivity(getPackageManager()) != null )
+        if (sendIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(chooser);
+        }
     }
 
     /**
@@ -100,30 +107,32 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param item item for edited
      */
-    private void goToWriteToEdit ( Memo item ) {
-        Intent intent = new Intent(getApplicationContext(), WriteActivity.class);
-        intent.putExtra("itemId", item.getId());
+    private void goToWriteToEdit( Memo item ) {
+        Intent intent = new Intent(getApplicationContext() , WriteActivity.class);
+
+        intent.putExtra("itemId" , item.getId());
         startActivity(intent);
     }
 
     @Override
-    public boolean onCreateOptionsMenu ( Menu menu ) {
+    public boolean onCreateOptionsMenu( Menu menu ) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
+
+        inflater.inflate(R.menu.menu_main , menu);
         return true;
     }
 
-    public void onFabBtnClick ( View v ) { //플로팅버튼클릭
-        startActivity(new Intent(getApplicationContext(), WriteActivity.class));
+    public void onFabBtnClick( View v ) { //플로팅버튼클릭
+        startActivity(new Intent(getApplicationContext() , WriteActivity.class));
     }
 
     @Override
-    public boolean onOptionsItemSelected ( MenuItem item ) {
-        switch ( item.getItemId() ) {
+    public boolean onOptionsItemSelected( MenuItem item ) {
+        switch (item.getItemId()) {
             case R.id.menu_setting:
                 return true;
-            case R.id.menu_video :
-                Intent intent = new Intent(this, VideoActivity.class);
+            case R.id.menu_video:
+                Intent intent = new Intent(this , VideoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             default:
@@ -132,10 +141,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy () {
+    protected void onDestroy() {
         super.onDestroy();
+
         binding.recyclerviewMain.setAdapter(null);
         realm.close();
+        clickDisposable.dispose();
+        longClickDisposable.dispose();
     }
 }
 

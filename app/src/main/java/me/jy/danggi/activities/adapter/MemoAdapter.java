@@ -14,56 +14,57 @@ import me.jy.danggi.common.BaseRealmRecyclerViewAdapter;
 import me.jy.danggi.databinding.ItemMemoBinding;
 import me.jy.danggi.model.Memo;
 
-
 /**
- * adapter for memo
+ * Memo Adapter
  * Created by JY on 2018-01-12.
  */
 
-public class MemoAdapter extends BaseRealmRecyclerViewAdapter<Memo, MemoAdapter.MemoViewHolder> {
+public class MemoAdapter extends BaseRealmRecyclerViewAdapter<Memo, MemoAdapter.MemoViewHolder>{
 
     private PublishSubject<Memo> longClickSubject;
     private PublishSubject<Memo> clickSubject;
 
-    public MemoAdapter () {
+    public MemoAdapter() {
         this.longClickSubject = PublishSubject.create();
         this.clickSubject = PublishSubject.create();
     }
 
     @Override
     @NonNull
-    public MemoViewHolder onCreateViewHolder ( @NonNull ViewGroup parent, int viewType ) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_memo, parent, false);
+    public MemoViewHolder onCreateViewHolder( @NonNull ViewGroup parent , int viewType ) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_memo , parent , false);
 
         return new MemoViewHolder(itemView);
     }
 
     @Override
-    public void onBindView ( @NonNull MemoViewHolder holder, int position ) {
+    public void onBindView( @NonNull MemoViewHolder holder , int position ) {
         Memo memo = getItem(position);
         holder.binding.setMemo(memo);
         holder.getLongClickObserver(memo).subscribe(longClickSubject);
         holder.getClickObserver(memo).subscribe(clickSubject);
     }
 
-    public PublishSubject<Memo> getLongClickSubject () {
+    public PublishSubject<Memo> getLongClickSubject() {
         return longClickSubject;
     }
-    public PublishSubject<Memo> getClickSubject () {
+
+    public PublishSubject<Memo> getClickSubject() {
         return clickSubject;
     }
 
 
-    static class MemoViewHolder extends RecyclerView.ViewHolder {
+    static class MemoViewHolder extends RecyclerView.ViewHolder{
 
         private ItemMemoBinding binding;
 
-        private MemoViewHolder ( View itemView ) {
+        private MemoViewHolder( View itemView ) {
             super(itemView);
             binding = DataBindingUtil.bind(itemView);
         }
 
-        private Observable<Memo> getClickObserver ( Memo item ) {
+        private Observable<Memo> getClickObserver( Memo item ) {
             return Observable.create(emitter ->
                     itemView.setOnClickListener(v ->
                             emitter.onNext(item)
@@ -71,7 +72,7 @@ public class MemoAdapter extends BaseRealmRecyclerViewAdapter<Memo, MemoAdapter.
             );
         }
 
-        private Observable<Memo> getLongClickObserver ( Memo item ) {
+        private Observable<Memo> getLongClickObserver( Memo item ) {
             return Observable.create(emitter ->
                     itemView.setOnLongClickListener(v -> {
                         emitter.onNext(item);
