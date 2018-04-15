@@ -1,5 +1,5 @@
 <resources>
-    <string name = "app_name">DangGi</string>
+    <string name = "app_name">당기</string>
     
     <string name = "save_complete">저장되었습니다!</string>
     <string name = "edit_complete">수정되었습니다!</string>
@@ -10,7 +10,10 @@
     <string name = "menu_delete">삭제</string>
     <string name = "menu_video">동영상</string>
     <string name = "menu_text">텍스트</string>
-    <string name = "title_video">영상 메모</string>
+    <string name = "title_text">텍스트 기록</string>
+    <string name = "title_video">영상 기록</string>
+    <string name = "title_write">기록하기</string>
+    <string name = "select_video">영상 가져오기</string>
     
     <string name = "config_memo">보여질 메모</string>
     <string name = "text_color">글자 색</string>

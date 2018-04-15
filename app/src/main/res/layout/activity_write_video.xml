@@ -1,62 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android = "http://schemas.android.com/apk/res/android"
+<layout xmlns:android = "http://schemas.android.com/apk/res/android"
     xmlns:app = "http://schemas.android.com/apk/res-auto">
     
     <data>
+        
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.WriteVideoActivity"/>
+            type = "me.jy.danggi.activities.WriteVideoActivity" />
     </data>
-
-<android.support.constraint.ConstraintLayout
-    android:layout_width = "match_parent"
-    android:layout_height = "match_parent"
-    >
-    <android.support.v7.widget.Toolbar
-        android:id = "@+id/toolbar_write_video"
-        style = "@style/ToolbarStyle"
-        app:layout_constraintEnd_toEndOf = "parent"
-        app:layout_constraintStart_toStartOf = "parent"
-        app:layout_constraintTop_toTopOf = "parent"
-        app:title = "@string/title_video"
-        app:titleTextAppearance = "@style/ToolbarTitleTextStyle" />
     
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id = "@+id/play_view"
-        android:layout_width = "0dp"
-        app:surface_type="texture_view"
-        android:background="@android:color/black"
-        android:layout_height = "230dp"
-        app:controller_layout_id = "@layout/exo_controls"
-        app:layout_constraintEnd_toEndOf = "parent"
-        app:layout_constraintStart_toStartOf = "parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_write_video"/>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width = "match_parent"
+        android:layout_height = "match_parent">
+        
+        <android.support.v7.widget.Toolbar
+            android:id = "@+id/toolbar_write_video"
+            style = "@style/ToolbarStyle"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toTopOf = "parent"
+            app:title = "@string/title_write"
+            app:titleTextAppearance = "@style/ToolbarTitleTextStyle" />
+        
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id = "@+id/play_view"
+            android:layout_width = "0dp"
+            android:layout_height = "230dp"
+            android:background = "@android:color/black"
+            app:controller_layout_id = "@layout/exo_controls"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toBottomOf = "@+id/toolbar_write_video"
+            app:surface_type = "texture_view" />
+        
+        <EditText
+            android:id = "@+id/edit_video_memo"
+            android:layout_width = "0dp"
+            android:layout_height = "0dp"
+            android:background = "@android:color/white"
+            android:gravity = "top"
+            android:hint = "@string/hint_input_text"
+            android:inputType = "textMultiLine"
+            android:padding = "@dimen/basic_margin"
+            android:textColor = "@android:color/black"
+            android:textSize = "16sp"
+            app:layout_constraintBottom_toBottomOf = "parent"
+            app:layout_constraintEnd_toEndOf = "parent"
+            app:layout_constraintStart_toStartOf = "parent"
+            app:layout_constraintTop_toBottomOf = "@+id/btn_video_select" />
+        
+        <Button
+            android:id = "@+id/btn_video_select"
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:background = "@color/colorAccent"
+            android:onClick = "@{activity::onVideoSelectClick}"
+            android:text = "@string/select_video"
+            android:textColor = "@android:color/white"
+            android:textSize = "14sp"
+            app:layout_constraintEnd_toEndOf = "parent"
+            
+            app:layout_constraintTop_toBottomOf = "@+id/play_view" />
     
-    <EditText
-        android:id="@+id/edit_video_memo"
-        android:layout_width = "0dp"
-        android:layout_height = "0dp"
-        android:background = "@android:color/white"
-        android:gravity = "top"
-        android:hint="@string/hint_input_text"
-        android:inputType = "textMultiLine"
-        android:padding = "@dimen/basic_margin"
-        android:textColor = "@android:color/black"
-        android:textSize = "16sp"
-        app:layout_constraintBottom_toBottomOf = "parent"
-        app:layout_constraintEnd_toEndOf = "parent"
-        app:layout_constraintStart_toStartOf = "parent"
-        app:layout_constraintTop_toBottomOf = "@+id/play_view" />
-    
-    <Button
-        android:id = "@+id/btn_video_select"
-        android:layout_width = "wrap_content"
-        android:layout_height = "wrap_content"
-        android:text = "비디오 선택"
-        android:onClick="@{activity::onVideoSelectClick}"
-        app:layout_constraintBottom_toBottomOf = "parent"
-        app:layout_constraintEnd_toEndOf = "parent" />
-
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
 </layout>
