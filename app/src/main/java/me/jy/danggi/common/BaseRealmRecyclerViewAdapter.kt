@@ -7,6 +7,7 @@ import io.realm.RealmModel
 import io.realm.RealmResults
 
 /**
+ * Base RecyclerView Adapter (Realm Object)
  * Created by JY on 2018-04-01.
  */
 abstract class BaseRealmRecyclerViewAdapter<T : RealmModel, H : RecyclerView.ViewHolder> : RecyclerView.Adapter<H>() {
@@ -30,6 +31,7 @@ abstract class BaseRealmRecyclerViewAdapter<T : RealmModel, H : RecyclerView.Vie
     override fun onBindViewHolder(holder: H, position: Int) {
         onBindView(holder, position)
     }
+
     abstract fun onBindView(holder: H, position: Int)
 
     /**
@@ -37,8 +39,8 @@ abstract class BaseRealmRecyclerViewAdapter<T : RealmModel, H : RecyclerView.Vie
      */
     private fun addListener(itemList: OrderedRealmCollection<T>) {
         if (itemList is RealmResults<T>) {
-           itemList.addChangeListener { t, changeSet ->
-               notifyDataSetChanged()
+            itemList.addChangeListener { t, changeSet ->
+                notifyDataSetChanged()
             }
         } else if (itemList is RealmList<T>) {
             itemList.addChangeListener { t, changeSet ->

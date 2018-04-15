@@ -24,10 +24,11 @@ class VideoActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityVideoBinding
     private lateinit var realm: Realm
-    private var adapter:VideoAdapter?=null
+    private var adapter: VideoAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video)
         binding.setVariable(BR.activity, this)
 
@@ -57,8 +58,9 @@ class VideoActivity : AppCompatActivity() {
         adapter?.updateItemList(realm.where(Video::class.java).sort("writeDate", Sort.DESCENDING).findAll())
     }
 
-    private fun goToWriteVideo(item:Video) {
+    private fun goToWriteVideo(item: Video) {
         val intent = Intent(this, WriteVideoActivity::class.java)
+
         intent.putExtra("itemId", item.id)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
@@ -66,7 +68,8 @@ class VideoActivity : AppCompatActivity() {
 
     private fun createDialog(item: Video): Dialog { //다이얼로그 생성
         val builder = AlertDialog.Builder(this)
-        return builder.setTitle(item.content.substring(0, item.content.length/2))
+
+        return builder.setTitle(getString(R.string.ask_choose))
                 .setItems(R.array.menus) { _, which ->
                     when (which) {
                         0 -> DataHelper.deleteVideo(realm, item.id)
@@ -76,9 +79,10 @@ class VideoActivity : AppCompatActivity() {
     }
 
 
-    private fun shareItem(item:Video) {
-        val sendIntent= Intent(Intent.ACTION_SEND)
-        sendIntent.putExtra(Intent.EXTRA_STREAM,  Uri.parse(item.uri))
+    private fun shareItem(item: Video) {
+        val sendIntent = Intent(Intent.ACTION_SEND)
+
+        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(item.uri))
         sendIntent.type = "video/*"
         startActivity(Intent.createChooser(sendIntent, getString(R.string.menu_share)))
     }
@@ -104,7 +108,8 @@ class VideoActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         realm.close()
-        adapter=null
+        adapter = null
     }
 }
