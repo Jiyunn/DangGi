@@ -81,7 +81,7 @@ public class DataHelper{
     public static void addVideoAsync( Realm realm , final Bitmap bitmap , final Uri uri , final String content ) {
         realm.executeTransactionAsync(r -> {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG , 10 , stream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG , 100 , stream);
             byte[] thumbnailByte = stream.toByteArray();
             bitmap.recycle();
 
@@ -130,7 +130,7 @@ public class DataHelper{
 
             if (video != null) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG , 10 , stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG , 100 , stream);
                 byte[] thumbnailByte = stream.toByteArray();
                 bitmap.recycle();
 
