@@ -21,7 +21,7 @@
             android:layout_width = "110dp"
             android:layout_height = "0dp"
             android:scaleType = "centerCrop"
-            android:src = "@{video.thumbnail}"
+            app:thumbRes="@{video.thumbnail}"
             app:layout_constraintBottom_toBottomOf = "parent"
             app:layout_constraintStart_toStartOf = "parent"
             app:layout_constraintTop_toTopOf = "parent" />
