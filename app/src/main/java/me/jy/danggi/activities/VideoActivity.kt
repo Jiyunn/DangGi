@@ -100,7 +100,9 @@ class VideoActivity : AppCompatActivity() {
         when (item?.itemId) {
             R.id.menu_text -> {
                 startActivity(Intent(this, MainActivity::class.java))
-                return true
+            }
+            R.id.menu_photo -> {
+                startActivity(Intent(this, PhotoActivity::class.java))
             }
         }
         return false
