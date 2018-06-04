@@ -81,32 +81,30 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
      * 플레이어 설정
      */
     private fun initPlayer() {
-        player.let {
+        if (player == null) {
             mainHandler = Handler()
             val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
             trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
             eventLogger = EventLogger(trackSelector)
 
-            player = ExoPlayerFactory.newSimpleInstance(this, trackSelector)
-            binding.playView.requestFocus()
-            binding.playView.setControllerVisibilityListener(this)
-            binding.playView.player = player
+            val videoSource: MediaSource = ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri)
+            buildMediaSource(uri, "", mainHandler, eventLogger)
 
-            player?.addListener(PlayerEventListener())
-            player?.addListener(eventLogger)
-            player?.playWhenReady = true
-            player?.addVideoDebugListener(eventLogger)
-            player?.addAudioDebugListener(eventLogger)
+            player = ExoPlayerFactory.newSimpleInstance(this, trackSelector).apply {
+                addListener(PlayerEventListener())
+                addListener(eventLogger)
+                playWhenReady = true
+                prepare(videoSource)
+            }
+            binding.playView.apply {
+                requestFocus()
+                setControllerVisibilityListener(this@WriteVideoActivity)
+                player = this@WriteVideoActivity.player
+            }
 
             mediaDataSourceFactory = DefaultDataSourceFactory(this,
                     Util.getUserAgent(this, "MyApplication"), bandwidthMeter)
         }
-
-        val videoSource: MediaSource = ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri)
-
-        buildMediaSource(uri, "", mainHandler, eventLogger)
-
-        player?.prepare(videoSource)
         binding.playView.setPlaybackPreparer(this)
     }
 
@@ -202,9 +200,10 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
 
 
     private fun selectVideo() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.type = "video/*"
-        startActivityForResult(intent, video)
+        Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "video/*"
+            startActivityForResult(this, video)
+        }
     }
 
     private fun initToolbar() {
@@ -258,7 +257,6 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
-
     }
 
     private fun releasePlayer() {
