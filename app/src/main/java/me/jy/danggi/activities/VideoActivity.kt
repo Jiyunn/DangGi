@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
 import io.realm.Sort
 import me.jy.danggi.BR
@@ -23,16 +24,15 @@ import me.jy.danggi.model.Video
 class VideoActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityVideoBinding
-    private lateinit var realm: Realm
+    private val realm = Realm.getDefaultInstance()
     private var adapter: VideoAdapter? = null
+    private var disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video)
         binding.setVariable(BR.activity, this)
-
-        realm = Realm.getDefaultInstance()
 
         initToolbar()
         initRecyclerView()
@@ -43,27 +43,29 @@ class VideoActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        adapter = VideoAdapter()
-
-        adapter?.clickSubject?.subscribe { data ->
-            goToWriteVideo(data)
+        adapter = VideoAdapter().apply {
+            disposables.add(clickSubject.subscribe { data ->
+                goToWriteVideo(data)
+            })
+            disposables.add(longClickSubject.subscribe { data ->
+                createDialog(data).show()
+            })
         }
-        adapter?.longClickSubject?.subscribe { data ->
-            createDialog(data).show()
-        }
-        binding.recyclerviewVideo.layoutManager = LinearLayoutManager(this)
-        binding.recyclerviewVideo.adapter = adapter
-        binding.recyclerviewVideo.setHasFixedSize(true)
 
+        binding.recyclerviewVideo.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(this@VideoActivity)
+            adapter = this@VideoActivity.adapter
+        }
         adapter?.updateItemList(realm.where(Video::class.java).sort("writeDate", Sort.DESCENDING).findAll())
     }
 
     private fun goToWriteVideo(item: Video) {
-        val intent = Intent(this, WriteVideoActivity::class.java)
-
-        intent.putExtra("itemId", item.id)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
+        Intent(this, WriteVideoActivity::class.java).apply {
+            putExtra("itemId", item.id)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(this)
+        }
     }
 
     private fun createDialog(item: Video): Dialog { //다이얼로그 생성
@@ -80,11 +82,11 @@ class VideoActivity : AppCompatActivity() {
 
 
     private fun shareItem(item: Video) {
-        val sendIntent = Intent(Intent.ACTION_SEND)
-
-        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(item.uri))
-        sendIntent.type = "video/*"
-        startActivity(Intent.createChooser(sendIntent, getString(R.string.menu_share)))
+        Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_STREAM, Uri.parse(item.uri))
+            type = "video/*"
+            startActivity(Intent.createChooser(this, getString(R.string.menu_share)))
+        }
     }
 
     fun onFabBtnClick(v: View) { //플로팅버튼클릭
@@ -100,7 +102,9 @@ class VideoActivity : AppCompatActivity() {
         when (item?.itemId) {
             R.id.menu_text -> {
                 startActivity(Intent(this, MainActivity::class.java))
-                return true
+            }
+            R.id.menu_photo -> {
+                startActivity(Intent(this, PhotoActivity::class.java))
             }
         }
         return false
@@ -111,5 +115,6 @@ class VideoActivity : AppCompatActivity() {
 
         realm.close()
         adapter = null
+        disposables.clear()
     }
 }

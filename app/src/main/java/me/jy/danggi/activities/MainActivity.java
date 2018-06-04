@@ -131,10 +131,16 @@ public class MainActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             case R.id.menu_setting:
                 return true;
-            case R.id.menu_video:
+            case R.id.menu_video: {
                 Intent intent = new Intent(this , VideoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+            }
+            case R.id.menu_photo : {
+                Intent intent = new Intent(this , PhotoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
             default:
                 return true;
         }

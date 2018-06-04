@@ -31,13 +31,16 @@ class VideoAdapter : BaseRealmRecyclerViewAdapter<Video, VideoAdapter.VideoViewH
 
     override fun onBindView(holder: VideoViewHolder, position: Int) {
         val video: Video = getItem(position)
-        holder.binding?.video = video
-        holder.getClickSubject(video).subscribe(clickSubject)
-        holder.getLongClickObserver(video).subscribe(longClickSubject)
+
+        holder.apply {
+            binding?.video = video
+            getClickSubject(video).subscribe(clickSubject)
+            getLongClickObserver(video).subscribe(longClickSubject)
+        }
     }
 
 
-    inner class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var binding: ItemVideoBinding? = null
 
