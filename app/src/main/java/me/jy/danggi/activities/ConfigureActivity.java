@@ -36,6 +36,11 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
 
     private Realm realm;
 
+    private final String TEXT_COLOR = "textColor";
+    private final String CONTENT="content";
+    private final String BACKGROUND="background";
+    private final String GRAVITY="gravity";
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
@@ -69,10 +74,10 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         SharedPreferences sharedPref = getSharedPreferences(String.valueOf(mAppWidgetId) , Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        editor.putString("content" , binding.textSelectMemo.getText().toString());
-        editor.putString("textColor" , binding.textSelectTextColor.getText().toString());
-        editor.putString("background" , binding.textSelectBackgroundColor.getText().toString());
-        editor.putString("gravity" , binding.textSelectGravity.getText().toString());
+        editor.putString(CONTENT , binding.textSelectMemo.getText().toString());
+        editor.putString(TEXT_COLOR , binding.textSelectTextColor.getText().toString());
+        editor.putString(BACKGROUND , binding.textSelectBackgroundColor.getText().toString());
+        editor.putString(GRAVITY, binding.textSelectGravity.getText().toString());
         editor.apply();
         editor.commit();
     }
@@ -80,10 +85,10 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
     private void getWidgetSettingFromSharedPreferences() {
         SharedPreferences sharedPref = this.getSharedPreferences(String.valueOf(mAppWidgetId) , Context.MODE_PRIVATE);
 
-        binding.textSelectMemo.setText(sharedPref.getString("content" , getString(R.string.ask_choose)));
-        binding.textSelectTextColor.setText(sharedPref.getString("textColor" , getString(R.string.color_white)));
-        binding.textSelectBackgroundColor.setText(sharedPref.getString("background" , getString(R.string.color_dangGi)));
-        binding.textSelectGravity.setText(sharedPref.getString("gravity" , getString(R.string.gravity_left)));
+        binding.textSelectMemo.setText(sharedPref.getString(CONTENT , getString(R.string.ask_choose)));
+        binding.textSelectTextColor.setText(sharedPref.getString(TEXT_COLOR , getString(R.string.color_white)));
+        binding.textSelectBackgroundColor.setText(sharedPref.getString(BACKGROUND , getString(R.string.color_dangGi)));
+        binding.textSelectGravity.setText(sharedPref.getString(GRAVITY , getString(R.string.gravity_left)));
     }
 
     /**
