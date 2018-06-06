@@ -48,7 +48,6 @@ public class NormalWidget extends AppWidgetProvider{
 
                 editor.putString("content" , memo.getContent());
                 editor.apply();
-                editor.commit();
 
                 appWidgetManager.updateAppWidget(appWidgetId , views);
             }
@@ -75,7 +74,6 @@ public class NormalWidget extends AppWidgetProvider{
 
             editor.clear();
             editor.apply();
-            editor.commit();
         }
         realm.close();
     }
