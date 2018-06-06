@@ -78,8 +78,8 @@ public class ConfigureActivity extends AppCompatActivity implements ListDialogFr
         editor.putString(TEXT_COLOR , binding.textSelectTextColor.getText().toString());
         editor.putString(BACKGROUND , binding.textSelectBackgroundColor.getText().toString());
         editor.putString(GRAVITY, binding.textSelectGravity.getText().toString());
+
         editor.apply();
-        editor.commit();
     }
 
     private void getWidgetSettingFromSharedPreferences() {
