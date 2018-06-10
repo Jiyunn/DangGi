@@ -15,22 +15,25 @@
         android:supportsRtl = "true"
         android:theme = "@style/AppTheme">
         <provider
-            android:authorities = "${applicationId}.file_provider"
             android:name = "android.support.v4.content.FileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+            android:authorities = "${applicationId}.file_provider"
+            android:exported = "false"
+            android:grantUriPermissions = "true">
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:name = "android.support.FILE_PROVIDER_PATHS"
+                android:resource = "@xml/provider_paths" />
         </provider>
-        <activity android:name = ".activities.MainActivity">
+        
+        <activity android:name = ".activities.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name = "android.intent.action.MAIN" />
     
                 <category android:name = "android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name = ".activities.WriteActivity" />
+        <activity android:name = ".activities.WriteActivity"
+            />
         
         <receiver
             android:name = ".provider.NormalWidget"
@@ -49,8 +52,13 @@
                 <action android:name = "android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-        <activity android:name = ".activities.VideoActivity" />
-        <activity android:name = ".activities.WriteVideoActivity"/>
+        <activity android:name = ".activities.VideoActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name = ".activities.WriteVideoActivity" />
+        <activity android:name = ".activities.PhotoActivity"
+            android:launchMode="singleTask"
+           />
+        <activity android:name = ".activities.WritePhotoActivity"></activity>
     </application>
 
 </manifest>

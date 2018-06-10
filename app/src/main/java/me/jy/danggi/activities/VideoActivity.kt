@@ -101,10 +101,17 @@ class VideoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_text -> {
-                startActivity(Intent(this, MainActivity::class.java))
+                Intent(this, MainActivity::class.java).apply {
+                    startActivity(this)
+                }
+                return true
             }
             R.id.menu_photo -> {
-                startActivity(Intent(this, PhotoActivity::class.java))
+                Intent(this, PhotoActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(this)
+                }
+                return true
             }
         }
         return false
@@ -115,6 +122,6 @@ class VideoActivity : AppCompatActivity() {
 
         realm.close()
         adapter = null
-        disposables.clear()
+        disposables.dispose()
     }
 }

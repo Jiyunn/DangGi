@@ -13,7 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.realm.Realm;
 import io.realm.Sort;
 import me.jy.danggi.R;
@@ -26,8 +26,7 @@ public class MainActivity extends AppCompatActivity{
 
     private ActivityMainBinding binding;
     private Realm realm;
-    private Disposable clickDisposable;
-    private Disposable longClickDisposable;
+    private CompositeDisposable disposables;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity{
         binding.setActivity(this);
 
         realm = Realm.getDefaultInstance();
+        disposables = new CompositeDisposable();
 
         initToolbar();
         initRecyclerView();
@@ -53,14 +53,14 @@ public class MainActivity extends AppCompatActivity{
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         MemoAdapter adapter = new MemoAdapter();
 
-        longClickDisposable = adapter.getLongClickSubject()
+        disposables.add(adapter.getLongClickSubject()
                 .subscribe(data ->
                         createDialog(data).show()
-                );
-
-        clickDisposable = adapter.getClickSubject()
-                .subscribe(this::goToWriteToEdit);
-
+                )
+        );
+        disposables.add(adapter.getClickSubject()
+                .subscribe(this::goToWriteToEdit)
+        );
         binding.recyclerviewMain.setHasFixedSize(true);
         binding.recyclerviewMain.setAdapter(adapter);
         binding.recyclerviewMain.setLayoutManager(layoutManager);
@@ -129,20 +129,20 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onOptionsItemSelected( MenuItem item ) {
         switch (item.getItemId()) {
-            case R.id.menu_setting:
-                return true;
-            case R.id.menu_video: {
-                Intent intent = new Intent(this , VideoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
             case R.id.menu_photo : {
                 Intent intent = new Intent(this , PhotoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                return true;
+            }
+            case R.id.menu_video: {
+                Intent intent = new Intent(this , VideoActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
             }
             default:
-                return true;
+                return false;
         }
     }
 
@@ -152,8 +152,7 @@ public class MainActivity extends AppCompatActivity{
 
         binding.recyclerviewMain.setAdapter(null);
         realm.close();
-        clickDisposable.dispose();
-        longClickDisposable.dispose();
+        disposables.dispose();
     }
 }
 
