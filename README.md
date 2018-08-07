@@ -31,5 +31,12 @@
 >* Java
 >* Kotlin
 
+## 사용 아키텍처
+>* MVC(Model-View-Controller)
+
+## 사용 라이브러리
+>* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
+>* [RxKotlin](https://github.com/ReactiveX/RxKotlin)
+
 ### 버전 정보
 >* 1.0v
