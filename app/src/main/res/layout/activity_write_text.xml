@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android = "http://schemas.android.com/apk/res/android"
-    xmlns:app = "http://schemas.android.com/apk/res-auto">
+    xmlns:app = "http://schemas.android.com/apk/res-auto"
+    xmlns:tools = "http://schemas.android.com/tools"
+    >
     
     <data>
         
@@ -25,15 +27,9 @@
         
         <EditText
             android:id = "@+id/edit_memo"
-            android:layout_width = "0dp"
-            android:layout_height = "0dp"
-            android:background = "@android:color/white"
-            android:gravity = "top"
-            android:inputType = "textMultiLine"
-            android:labelFor = "@+id/edit_memo"
-            android:padding = "@dimen/basic_margin"
-            android:textColor = "@android:color/black"
-            android:textSize = "16sp"
+            style="@style/EditTextMemo"
+            tools:text="adsfasdf\nasdfasdf\nasdfasdf"
+            android:hint = "@string/hint_input_text"
             app:layout_constraintBottom_toBottomOf = "parent"
             app:layout_constraintEnd_toEndOf = "parent"
             app:layout_constraintStart_toStartOf = "parent"
