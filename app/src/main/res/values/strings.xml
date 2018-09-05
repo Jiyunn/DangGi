@@ -13,17 +13,22 @@
     <string name = "title_text">텍스트 기록</string>
     <string name = "title_video">영상 기록</string>
     <string name = "title_write">기록하기</string>
-    <string name = "select_video">영상 가져오기</string>
     
     <string name = "config_memo">보여질 메모</string>
     <string name = "text_color">글자 색</string>
     <string name = "background_color">배경 색</string>
     <string name = "sort">정렬</string>
     <string name = "ask_choose">선택해주세요</string>
-    <string name = "hint_input_text">내용을 입력해주세요</string>
     
+    <!--write text-->
+    <string name = "hint_input_text">기록해보세요.</string>
+    
+    <!--write video-->
+    <string name = "select_video">영상 가져오기</string>
+    <string name = "hint_input_video_text">영상에 대해 기록해보세요.</string>
+    
+    <!--permission-->
     <string name = "permission_denied">권한이 거부되었습니다.</string>
-    
     <string name = "rationale_title">권한을 요청합니다.</string>
     <string name = "rationale_message">동영상을 가져오기 위해 접근 권한이 필요합니다.</string>
     
