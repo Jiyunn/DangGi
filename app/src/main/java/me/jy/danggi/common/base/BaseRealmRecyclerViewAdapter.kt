@@ -1,4 +1,4 @@
-package me.jy.danggi.common
+package me.jy.danggi.common.base
 
 import android.support.v7.widget.RecyclerView
 import io.realm.OrderedRealmCollection
@@ -39,11 +39,11 @@ abstract class BaseRealmRecyclerViewAdapter<T : RealmModel, H : RecyclerView.Vie
      */
     private fun addListener(itemList: OrderedRealmCollection<T>) {
         if (itemList is RealmResults<T>) {
-            itemList.addChangeListener { t, changeSet ->
+            itemList.addChangeListener { _, _ ->
                 notifyDataSetChanged()
             }
         } else if (itemList is RealmList<T>) {
-            itemList.addChangeListener { t, changeSet ->
+            itemList.addChangeListener { _, _ ->
                 notifyDataSetChanged()
             }
         }

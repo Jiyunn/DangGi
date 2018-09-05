@@ -1,4 +1,4 @@
-package me.jy.danggi.database;
+package me.jy.danggi.data;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,9 +8,6 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import me.jy.danggi.model.Memo;
-import me.jy.danggi.model.Video;
-import me.jy.danggi.model.Widget;
 
 
 /**

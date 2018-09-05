@@ -6,14 +6,13 @@
         
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.WriteActivity" />
+            type = "me.jy.danggi.text.WriteTextActivity" />
     
     </data>
     
     <android.support.constraint.ConstraintLayout
         android:layout_width = "match_parent"
-        android:layout_height = "match_parent"
-        android:orientation = "vertical">
+        android:layout_height = "match_parent">
         
         <android.support.v7.widget.Toolbar
             android:id = "@+id/toolbar_write"

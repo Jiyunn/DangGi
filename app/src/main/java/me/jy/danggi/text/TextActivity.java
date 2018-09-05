@@ -1,4 +1,4 @@
-package me.jy.danggi.activities;
+package me.jy.danggi.text;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,14 +17,15 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.realm.Realm;
 import io.realm.Sort;
 import me.jy.danggi.R;
-import me.jy.danggi.activities.adapter.MemoAdapter;
-import me.jy.danggi.database.DataHelper;
-import me.jy.danggi.databinding.ActivityMainBinding;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.databinding.ActivityTextBinding;
+import me.jy.danggi.text.adapter.TextAdapter;
+import me.jy.danggi.data.DataHelper;
+import me.jy.danggi.data.Memo;
+import me.jy.danggi.video.VideoActivity;
 
-public class MainActivity extends AppCompatActivity{
+public class TextActivity extends AppCompatActivity{
 
-    private ActivityMainBinding binding;
+    private ActivityTextBinding binding;
     private Realm realm;
     private CompositeDisposable disposables;
 
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this , R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this , R.layout.activity_text);
         binding.setActivity(this);
 
         realm = Realm.getDefaultInstance();
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity{
      */
     private void initRecyclerView() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        MemoAdapter adapter = new MemoAdapter();
+        TextAdapter adapter = new TextAdapter();
 
         disposables.add(adapter.getLongClickSubject()
                 .subscribe(data ->
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity{
      * @param item item for edited
      */
     private void goToWriteToEdit( Memo item ) {
-        Intent intent = new Intent(getApplicationContext() , WriteActivity.class);
+        Intent intent = new Intent(getApplicationContext() , WriteTextActivity.class);
 
         intent.putExtra("itemId" , item.getId());
         startActivity(intent);
@@ -123,18 +124,12 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void onFabBtnClick( View v ) { //플로팅버튼클릭
-        startActivity(new Intent(getApplicationContext() , WriteActivity.class));
+        startActivity(new Intent(getApplicationContext() , WriteTextActivity.class));
     }
 
     @Override
     public boolean onOptionsItemSelected( MenuItem item ) {
         switch (item.getItemId()) {
-            case R.id.menu_photo : {
-                Intent intent = new Intent(this , PhotoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            }
             case R.id.menu_video: {
                 Intent intent = new Intent(this , VideoActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

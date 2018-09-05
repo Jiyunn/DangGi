@@ -1,4 +1,4 @@
-package me.jy.danggi.activities
+package me.jy.danggi.video
 
 import android.app.Activity
 import android.content.Intent
@@ -31,14 +31,13 @@ import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.Util
 import com.tedpark.tedpermission.rx2.TedRx2Permission
 import io.realm.Realm
 import me.jy.danggi.BR
 import me.jy.danggi.MyApplication
 import me.jy.danggi.R
-import me.jy.danggi.database.DataHelper
+import me.jy.danggi.data.DataHelper
 import me.jy.danggi.databinding.ActivityWriteVideoBinding
 
 class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlView.VisibilityListener {
@@ -46,7 +45,6 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
     private lateinit var binding: ActivityWriteVideoBinding
     private lateinit var trackSelector: DefaultTrackSelector
     private lateinit var mainHandler: Handler
-    private lateinit var eventLogger: EventLogger
     private lateinit var mediaDataSourceFactory: DataSource.Factory
 
     private val bandwidthMeter: DefaultBandwidthMeter = DefaultBandwidthMeter()
@@ -85,14 +83,12 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
             mainHandler = Handler()
             val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
             trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
-            eventLogger = EventLogger(trackSelector)
 
             val videoSource: MediaSource = ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri)
-            buildMediaSource(uri, "", mainHandler, eventLogger)
+            buildMediaSource(uri, "", mainHandler,null)
 
             player = ExoPlayerFactory.newSimpleInstance(this, trackSelector).apply {
                 addListener(PlayerEventListener())
-                addListener(eventLogger)
                 playWhenReady = true
                 prepare(videoSource)
             }

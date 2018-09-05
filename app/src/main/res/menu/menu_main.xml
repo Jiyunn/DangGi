@@ -15,11 +15,6 @@
         app:showAsAction = "never" />
     
     <item
-        android:id = "@+id/menu_photo"
-        android:title = "@string/menu_photo"
-        app:showAsAction = "never" />
-    
-    <item
         android:id = "@+id/menu_text"
         android:title = "@string/menu_text"
         app:showAsAction = "never" />

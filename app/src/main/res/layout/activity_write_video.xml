@@ -6,7 +6,7 @@
         
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.WriteVideoActivity" />
+            type = "me.jy.danggi.video.WriteVideoActivity" />
     </data>
     
     <android.support.constraint.ConstraintLayout
