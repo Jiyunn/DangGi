@@ -1,4 +1,4 @@
-package me.jy.danggi.provider;
+package me.jy.danggi.common.provider;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -11,8 +11,8 @@ import java.util.List;
 
 import io.realm.Realm;
 import me.jy.danggi.R;
-import me.jy.danggi.database.DataHelper;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.data.DataHelper;
+import me.jy.danggi.data.Memo;
 
 /**
  * Provider class for widget

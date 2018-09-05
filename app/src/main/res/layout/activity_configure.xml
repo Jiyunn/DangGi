@@ -6,7 +6,7 @@
         
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.ConfigureActivity" />
+            type = "me.jy.danggi.widget.ConfigureActivity" />
     </data>
     
     <android.support.constraint.ConstraintLayout

@@ -1,4 +1,4 @@
-package me.jy.danggi.activities;
+package me.jy.danggi.widget;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,11 +18,10 @@ import android.widget.RemoteViews;
 
 import io.realm.Realm;
 import me.jy.danggi.R;
-import me.jy.danggi.activities.fragment.ListDialogFragment;
-import me.jy.danggi.database.DataHelper;
+import me.jy.danggi.data.DataHelper;
 import me.jy.danggi.databinding.ActivityConfigureBinding;
-import me.jy.danggi.model.Memo;
-import me.jy.danggi.provider.NormalWidget;
+import me.jy.danggi.data.Memo;
+import me.jy.danggi.common.provider.NormalWidget;
 
 public class ConfigureActivity extends AppCompatActivity implements ListDialogFragment.OnMemoItemClickListener{
 

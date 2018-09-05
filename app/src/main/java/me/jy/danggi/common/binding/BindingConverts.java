@@ -1,4 +1,4 @@
-package me.jy.danggi.binding;
+package me.jy.danggi.common.binding;
 
 import android.databinding.BindingConversion;
 

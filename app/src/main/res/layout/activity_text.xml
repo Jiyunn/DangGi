@@ -6,7 +6,7 @@
         
         <variable
             name = "activity"
-            type = "me.jy.danggi.activities.MainActivity" />
+            type = "me.jy.danggi.text.TextActivity" />
     </data>
     
     <android.support.constraint.ConstraintLayout

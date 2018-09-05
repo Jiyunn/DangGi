@@ -6,7 +6,7 @@
     android:minResizeHeight = "40dp"
     android:minResizeWidth = "40dp"
     android:minWidth = "110dp"
-    android:configure="me.jy.danggi.activities.ConfigureActivity"
+    android:configure="me.jy.danggi.widget.ConfigureActivity"
     android:previewImage = "@mipmap/ic_launcher"
     android:resizeMode = "horizontal|vertical"
     android:updatePeriodMillis = "0"

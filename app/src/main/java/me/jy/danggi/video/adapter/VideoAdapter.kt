@@ -1,4 +1,4 @@
-package me.jy.danggi.activities.adapter
+package me.jy.danggi.video.adapter
 
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import me.jy.danggi.R
-import me.jy.danggi.common.BaseRealmRecyclerViewAdapter
+import me.jy.danggi.common.base.BaseRealmRecyclerViewAdapter
+import me.jy.danggi.data.Video
 import me.jy.danggi.databinding.ItemVideoBinding
-import me.jy.danggi.model.Video
 
 /**
  * Video Adapter

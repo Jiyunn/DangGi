@@ -1,4 +1,4 @@
-package me.jy.danggi.activities.fragment;
+package me.jy.danggi.widget;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -16,9 +16,9 @@ import io.reactivex.disposables.Disposable;
 import io.realm.Realm;
 import io.realm.Sort;
 import me.jy.danggi.R;
-import me.jy.danggi.activities.fragment.adapter.ListDialogAdapter;
+import me.jy.danggi.widget.adapter.ListDialogAdapter;
 import me.jy.danggi.databinding.FragmentDialogListBinding;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.data.Memo;
 
 /**
  * Dialog fragment for  memo

@@ -1,4 +1,4 @@
-package me.jy.danggi.activities.fragment.adapter;
+package me.jy.danggi.widget.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.jy.danggi.R;
-import me.jy.danggi.common.BaseRealmRecyclerViewAdapter;
+import me.jy.danggi.common.base.BaseRealmRecyclerViewAdapter;
 import me.jy.danggi.databinding.ItemDialogListBinding;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.data.Memo;
 
 /**
  * Adapter class for memo list

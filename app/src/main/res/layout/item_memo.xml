@@ -7,7 +7,7 @@
     <data>
         <variable
             name="memo"
-            type="me.jy.danggi.model.Memo"
+            type="me.jy.danggi.data.Memo"
             />
     </data>
 

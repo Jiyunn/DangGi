@@ -1,4 +1,4 @@
-package me.jy.danggi.activities;
+package me.jy.danggi.text;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import me.jy.danggi.R;
-import me.jy.danggi.database.DataHelper;
-import me.jy.danggi.databinding.ActivityWriteBinding;
-import me.jy.danggi.model.Widget;
-import me.jy.danggi.provider.NormalWidget;
+import me.jy.danggi.data.DataHelper;
+import me.jy.danggi.data.Widget;
+import me.jy.danggi.common.provider.NormalWidget;
+import me.jy.danggi.databinding.ActivityWriteTextBinding;
 
-public class WriteActivity extends AppCompatActivity{
+public class WriteTextActivity extends AppCompatActivity{
 
-    private ActivityWriteBinding binding;
+    private ActivityWriteTextBinding binding;
     private int oldId;
     private String oldContent;
     private Realm realm;
@@ -31,7 +31,7 @@ public class WriteActivity extends AppCompatActivity{
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.setContentView(this , R.layout.activity_write);
+        binding = DataBindingUtil.setContentView(this , R.layout.activity_write_text);
         binding.setActivity(this);
 
         realm = Realm.getDefaultInstance();

@@ -1,4 +1,4 @@
-package me.jy.danggi.model
+package me.jy.danggi.data
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

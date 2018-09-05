@@ -1,4 +1,4 @@
-package me.jy.danggi.activities
+package me.jy.danggi.video
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -16,10 +16,11 @@ import io.realm.Realm
 import io.realm.Sort
 import me.jy.danggi.BR
 import me.jy.danggi.R
-import me.jy.danggi.activities.adapter.VideoAdapter
-import me.jy.danggi.database.DataHelper
+import me.jy.danggi.data.DataHelper
+import me.jy.danggi.data.Video
 import me.jy.danggi.databinding.ActivityVideoBinding
-import me.jy.danggi.model.Video
+import me.jy.danggi.text.TextActivity
+import me.jy.danggi.video.adapter.VideoAdapter
 
 class VideoActivity : AppCompatActivity() {
 
@@ -101,14 +102,7 @@ class VideoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_text -> {
-                Intent(this, MainActivity::class.java).apply {
-                    startActivity(this)
-                }
-                return true
-            }
-            R.id.menu_photo -> {
-                Intent(this, PhotoActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                Intent(this, TextActivity::class.java).apply {
                     startActivity(this)
                 }
                 return true

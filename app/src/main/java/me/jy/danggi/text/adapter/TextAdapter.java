@@ -1,4 +1,4 @@
-package me.jy.danggi.activities.adapter;
+package me.jy.danggi.text.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
@@ -10,21 +10,21 @@ import android.view.ViewGroup;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.jy.danggi.R;
-import me.jy.danggi.common.BaseRealmRecyclerViewAdapter;
+import me.jy.danggi.common.base.BaseRealmRecyclerViewAdapter;
 import me.jy.danggi.databinding.ItemMemoBinding;
-import me.jy.danggi.model.Memo;
+import me.jy.danggi.data.Memo;
 
 /**
  * Memo Adapter
  * Created by JY on 2018-01-12.
  */
 
-public class MemoAdapter extends BaseRealmRecyclerViewAdapter<Memo, MemoAdapter.MemoViewHolder>{
+public class TextAdapter extends BaseRealmRecyclerViewAdapter<Memo, TextAdapter.MemoViewHolder>{
 
     private PublishSubject<Memo> longClickSubject;
     private PublishSubject<Memo> clickSubject;
 
-    public MemoAdapter() {
+    public TextAdapter() {
         this.longClickSubject = PublishSubject.create();
         this.clickSubject = PublishSubject.create();
     }
