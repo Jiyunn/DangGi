@@ -6,4 +6,6 @@
     
     <color name = "colorMenus">#8885AE</color>
     <color name = "colorStatus">#585670</color>
+    
+    <color name = "colorMemo">#090008</color>
 </resources>

@@ -1,14 +1,15 @@
 <resources>
     
     <!-- Base application theme. -->
-    <style name = "AppTheme" parent = "Theme.AppCompat.DayNight.NoActionBar">
+    <style name = "AppTheme"
+        parent = "Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name = "colorPrimary">@color/colorPrimary</item>
         <item name = "colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name = "colorAccent">@color/colorAccent</item>
         <item name = "android:statusBarColor">@color/colorStatus</item>
         <item name = "android:homeAsUpIndicator">@drawable/ic_arrow_back_24dp</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name = "android:textColorSecondary">@android:color/white</item>
     </style>
     
     <style name = "ConfigureMenuTextStyle">
@@ -36,9 +37,9 @@
         <item name = "android:layout_width">0dp</item>
     </style>
     
-    <style name = "ToolbarStyle" >
+    <style name = "ToolbarStyle">
         <item name = "android:background">@color/colorMenus</item>
-        <item name = "android:layout_height">?attr/actionBarSize</item>
+        <item name = "android:layout_height">?android:attr/actionBarSize</item>
         <item name = "android:layout_width">match_parent</item>
         <item name = "android:elevation">4dp</item>
     </style>
@@ -49,16 +50,30 @@
         <item name = "android:textColor">@android:color/white</item>
     </style>
     
-    <style name = "ExoButton.PausePlay" parent="ExoMediaButton.Pause">
+    <style name = "EditTextMemo">
+        <item name = "android:layout_width">0dp</item>
+        <item name = "android:layout_height">0dp</item>
+        <item name = "android:background">@android:color/white</item>
+        <item name = "android:gravity">top</item>
+        <item name = "android:lineSpacingExtra">5sp</item>
+        <item name = "android:textColor">@color/colorMemo</item>
+        <item name = "android:padding">@dimen/basic_margin</item>
+        <item name = "android:inputType">textMultiLine</item>
+        <item name = "android:textSize">16sp</item>
+    </style>
+    
+    <style name = "ExoButton.PausePlay"
+        parent = "ExoMediaButton.Pause">
         <item name = "android:layout_width">55dp</item>
         <item name = "android:layout_height">55dp</item>
         <item name = "android:background">#CC000000</item>
     </style>
     
-    <style name = "ExoButton.NextPrevious" parent="ExoMediaButton.Next">
+    <style name = "ExoButton.NextPrevious"
+        parent = "ExoMediaButton.Next">
         <item name = "android:layout_width">50dp</item>
         <item name = "android:layout_height">50dp</item>
         <item name = "android:background">@android:color/transparent</item>
     </style>
-    
+
 </resources>
