@@ -55,9 +55,9 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
     private var oldId: Int = -1
     private val video: Int = 1
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write_video)
         binding.setVariable(BR.activity, this)
 

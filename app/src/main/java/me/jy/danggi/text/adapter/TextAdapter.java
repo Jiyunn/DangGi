@@ -2,6 +2,7 @@ package me.jy.danggi.text.adapter;
 
 import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,22 +10,25 @@ import android.view.ViewGroup;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmRecyclerViewAdapter;
 import me.jy.danggi.R;
-import me.jy.danggi.common.base.BaseRealmRecyclerViewAdapter;
-import me.jy.danggi.databinding.ItemMemoBinding;
 import me.jy.danggi.data.Memo;
+import me.jy.danggi.databinding.ItemMemoBinding;
 
 /**
  * Memo Adapter
  * Created by JY on 2018-01-12.
  */
 
-public class TextAdapter extends BaseRealmRecyclerViewAdapter<Memo, TextAdapter.MemoViewHolder>{
+public class TextAdapter extends RealmRecyclerViewAdapter<Memo, TextAdapter.MemoViewHolder>{
 
     private PublishSubject<Memo> longClickSubject;
     private PublishSubject<Memo> clickSubject;
 
-    public TextAdapter() {
+    public TextAdapter( @Nullable OrderedRealmCollection<Memo> data , boolean autoUpdate ) {
+        super(data , autoUpdate);
+
         this.longClickSubject = PublishSubject.create();
         this.clickSubject = PublishSubject.create();
     }
@@ -39,7 +43,7 @@ public class TextAdapter extends BaseRealmRecyclerViewAdapter<Memo, TextAdapter.
     }
 
     @Override
-    public void onBindView( @NonNull MemoViewHolder holder , int position ) {
+    public void onBindViewHolder( @NonNull MemoViewHolder holder , int position ) {
         Memo memo = getItem(position);
         holder.binding.setMemo(memo);
         holder.getLongClickObserver(memo).subscribe(longClickSubject);

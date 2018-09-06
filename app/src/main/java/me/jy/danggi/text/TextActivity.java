@@ -52,7 +52,7 @@ public class TextActivity extends AppCompatActivity{
      */
     private void initRecyclerView() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        TextAdapter adapter = new TextAdapter();
+        TextAdapter adapter = new TextAdapter(realm.where(Memo.class).sort("writeDate" , Sort.DESCENDING).findAll(), true);
 
         disposables.add(adapter.getLongClickSubject()
                 .subscribe(data ->
@@ -65,8 +65,6 @@ public class TextActivity extends AppCompatActivity{
         binding.recyclerviewMain.setHasFixedSize(true);
         binding.recyclerviewMain.setAdapter(adapter);
         binding.recyclerviewMain.setLayoutManager(layoutManager);
-
-        adapter.updateItemList(realm.where(Memo.class).sort("writeDate" , Sort.DESCENDING).findAll());
     }
 
     private Dialog createDialog( Memo item ) { //다이얼로그 생성
