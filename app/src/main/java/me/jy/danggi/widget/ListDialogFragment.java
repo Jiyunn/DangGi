@@ -60,7 +60,7 @@ public class ListDialogFragment extends DialogFragment{
     }
 
     private void initRecyclerView() {
-        ListDialogAdapter adapter = new ListDialogAdapter();
+        ListDialogAdapter adapter = new ListDialogAdapter(realm.where(Memo.class).sort("writeDate" , Sort.DESCENDING).findAll(), true);
 
         clickDisposable = adapter.getClickSubject()
                 .subscribe(data ->
@@ -69,8 +69,6 @@ public class ListDialogFragment extends DialogFragment{
         binding.recyclerDialog.setAdapter(adapter);
         binding.recyclerDialog.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.recyclerDialog.setHasFixedSize(true);
-
-        adapter.updateItemList(realm.where(Memo.class).sort("writeDate" , Sort.DESCENDING).findAll());
     }
 
     @NonNull

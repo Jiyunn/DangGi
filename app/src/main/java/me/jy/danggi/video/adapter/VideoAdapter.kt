@@ -7,8 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.realm.OrderedRealmCollection
+import io.realm.RealmRecyclerViewAdapter
 import me.jy.danggi.R
-import me.jy.danggi.common.base.BaseRealmRecyclerViewAdapter
 import me.jy.danggi.data.Video
 import me.jy.danggi.databinding.ItemVideoBinding
 
@@ -17,7 +18,7 @@ import me.jy.danggi.databinding.ItemVideoBinding
  * Created by JY on 2018-03-28.
  */
 
-class VideoAdapter : BaseRealmRecyclerViewAdapter<Video, VideoAdapter.VideoViewHolder>() {
+class VideoAdapter(data: OrderedRealmCollection<Video>?, autoUpdate: Boolean) : RealmRecyclerViewAdapter<Video, VideoAdapter.VideoViewHolder>(data, autoUpdate) {
 
     var clickSubject: PublishSubject<Video> = PublishSubject.create()
     var longClickSubject: PublishSubject<Video> = PublishSubject.create()
@@ -29,13 +30,13 @@ class VideoAdapter : BaseRealmRecyclerViewAdapter<Video, VideoAdapter.VideoViewH
         return VideoViewHolder(itemView)
     }
 
-    override fun onBindView(holder: VideoViewHolder, position: Int) {
-        val video: Video = getItem(position)
-
-        holder.apply {
-            binding?.video = video
-            getClickSubject(video).subscribe(clickSubject)
-            getLongClickObserver(video).subscribe(longClickSubject)
+    override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+        getItem(position)?.let{
+            holder.apply {
+                binding?.video = it
+                getClickSubject(it).subscribe(clickSubject)
+                getLongClickObserver(it).subscribe(longClickSubject)
+            }
         }
     }
 

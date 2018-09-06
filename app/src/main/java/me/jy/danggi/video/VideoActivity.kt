@@ -25,9 +25,11 @@ import me.jy.danggi.video.adapter.VideoAdapter
 class VideoActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityVideoBinding
+
     private val realm = Realm.getDefaultInstance()
     private var adapter: VideoAdapter? = null
     private var disposables = CompositeDisposable()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +46,9 @@ class VideoActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        adapter = VideoAdapter().apply {
+        adapter = VideoAdapter(
+                realm.where(Video::class.java).sort("writeDate", Sort.DESCENDING).findAll(), true).apply {
+
             disposables.add(clickSubject.subscribe { data ->
                 goToWriteVideo(data)
             })
@@ -58,7 +62,6 @@ class VideoActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@VideoActivity)
             adapter = this@VideoActivity.adapter
         }
-        adapter?.updateItemList(realm.where(Video::class.java).sort("writeDate", Sort.DESCENDING).findAll())
     }
 
     private fun goToWriteVideo(item: Video) {
