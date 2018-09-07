@@ -216,7 +216,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(binding.toolbarWriteVideo)
+        setSupportActionBar(binding.toolbarWriteVideo?.toolbarList)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

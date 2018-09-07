@@ -38,12 +38,15 @@ class TextActivity : AppCompatActivity() {
 
 
     private fun initToolbar() {
-        setSupportActionBar(binding.toolbarMain)
+        setSupportActionBar(binding.toolbarText?.toolbarList)
+        supportActionBar?.let {
+            title = getString(R.string.title_text)
+        }
     }
 
 
     private fun initRecyclerView() {
-        binding.recyclerviewMain.run {
+        binding.recyclerText.run {
             setHasFixedSize(true)
 
             layoutManager = LinearLayoutManager(this@TextActivity)
@@ -122,7 +125,7 @@ class TextActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        binding.recyclerviewMain.adapter = null
+        binding.recyclerText.adapter = null
         realm.close()
         disposables.dispose()
     }

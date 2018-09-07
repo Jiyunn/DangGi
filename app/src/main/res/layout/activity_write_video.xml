@@ -12,15 +12,10 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width = "match_parent"
         android:layout_height = "match_parent">
-        
-        <android.support.v7.widget.Toolbar
-            android:id = "@+id/toolbar_write_video"
-            style = "@style/ToolbarStyle"
-            app:layout_constraintEnd_toEndOf = "parent"
-            app:layout_constraintStart_toStartOf = "parent"
-            app:layout_constraintTop_toTopOf = "parent"
-            app:title = "@string/title_write"
-            app:titleTextAppearance = "@style/ToolbarTitleTextStyle" />
+
+        <include
+            android:id="@+id/toolbar_write_video"
+            layout="@layout/toolbar_list" />
         
         <com.google.android.exoplayer2.ui.PlayerView
             android:id = "@+id/play_view"

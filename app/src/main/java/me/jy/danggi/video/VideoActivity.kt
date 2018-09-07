@@ -42,7 +42,10 @@ class VideoActivity : AppCompatActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(binding.toolbarVideo)
+        setSupportActionBar(binding.toolbarVideo?.toolbarList)
+        supportActionBar?.let {
+            title = getString(R.string.title_video)
+        }
     }
 
     private fun initRecyclerView() {
@@ -57,7 +60,7 @@ class VideoActivity : AppCompatActivity() {
             })
         }
 
-        binding.recyclerviewVideo.apply {
+        binding.recyclerVideo.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@VideoActivity)
             adapter = this@VideoActivity.adapter
