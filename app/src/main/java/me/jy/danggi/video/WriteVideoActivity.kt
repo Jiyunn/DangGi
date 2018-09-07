@@ -16,6 +16,7 @@ import android.view.TextureView
 import android.view.View
 import android.widget.Toast
 import com.google.android.exoplayer2.*
+
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.MediaSourceEventListener
@@ -24,6 +25,7 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
+
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelection
@@ -37,18 +39,23 @@ import io.realm.Realm
 import me.jy.danggi.BR
 import me.jy.danggi.MyApplication
 import me.jy.danggi.R
+import me.jy.danggi.common.player.MemoPlayer
+import me.jy.danggi.common.player.PlayerEventListener
 import me.jy.danggi.data.DataHelper
 import me.jy.danggi.databinding.ActivityWriteVideoBinding
 
-class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlView.VisibilityListener {
+
+class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
 
     private lateinit var binding: ActivityWriteVideoBinding
+
     private lateinit var trackSelector: DefaultTrackSelector
-    private lateinit var mainHandler: Handler
     private lateinit var mediaDataSourceFactory: DataSource.Factory
 
     private val bandwidthMeter: DefaultBandwidthMeter = DefaultBandwidthMeter()
     private val realm: Realm = Realm.getDefaultInstance()
+
+
     private var uri: Uri? = null
     private var player: SimpleExoPlayer? = null
 
@@ -58,11 +65,12 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mediaDataSourceFactory = buildDataSourceFactory(true)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write_video)
         binding.setVariable(BR.activity, this)
 
 
-        mediaDataSourceFactory = buildDataSourceFactory(true)
         initToolbar()
 
         intent.extras?.let {
@@ -75,33 +83,37 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        releasePlayer()
+        setIntent(intent)
+    }
+
     /**
      * 플레이어 설정
      */
     private fun initPlayer() {
         if (player == null) {
-            mainHandler = Handler()
             val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
             trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
 
             val videoSource: MediaSource = ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri)
-            buildMediaSource(uri, "", mainHandler,null)
+            buildMediaSource(uri)
 
             player = ExoPlayerFactory.newSimpleInstance(this, trackSelector).apply {
                 addListener(PlayerEventListener(this@WriteVideoActivity))
                 playWhenReady = true
                 prepare(videoSource)
             }
-            binding.playView.apply {
-                requestFocus()
-                setControllerVisibilityListener(this@WriteVideoActivity)
-                player = this@WriteVideoActivity.player
-            }
 
             mediaDataSourceFactory = DefaultDataSourceFactory(this,
                     Util.getUserAgent(this, "MyApplication"), bandwidthMeter)
         }
-        binding.playView.setPlaybackPreparer(this)
+
+        binding.playView.apply {
+            requestFocus()
+            player = this@WriteVideoActivity.player
+            setPlaybackPreparer(this@WriteVideoActivity)
+        }
     }
 
     /**
@@ -114,35 +126,36 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
     /**
      * 타입 찾아서 미디어 소스 생성
      */
-    private fun buildMediaSource(uri: Uri?, overrideExtension: String,
-                                 handler: Handler?, listener: MediaSourceEventListener?): MediaSource {
+    private fun buildMediaSource(uri: Uri?): MediaSource {
 
-        @C.ContentType val type = if (TextUtils.isEmpty(overrideExtension))
-            Util.inferContentType(uri)
-        else
-            Util.inferContentType(".$overrideExtension")
+        @C.ContentType val type = Util.inferContentType(uri)
 
         when (type) {
             C.TYPE_DASH -> return DashMediaSource.Factory(
                     DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                     buildDataSourceFactory(false))
-                    .createMediaSource(uri, handler, listener)
+                    .createMediaSource(uri)
 
             C.TYPE_SS -> return SsMediaSource.Factory(
                     DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                     buildDataSourceFactory(false))
-                    .createMediaSource(uri, handler, listener)
+                    .createMediaSource(uri)
 
             C.TYPE_HLS -> return HlsMediaSource.Factory(mediaDataSourceFactory)
-                    .createMediaSource(uri, handler, listener)
+                    .createMediaSource(uri)
 
             C.TYPE_OTHER -> return ExtractorMediaSource.Factory(mediaDataSourceFactory)
-                    .createMediaSource(uri, handler, listener)
+                    .createMediaSource(uri)
             else -> {
                 throw IllegalStateException("Unsupported type: $type")
             }
         }
     }
+
+    override fun hideController() {
+        binding.playView.hideController()
+    }
+
 
     /**
      * 메모 저장
@@ -209,6 +222,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_write, menu)
+
         return true
     }
 
@@ -230,12 +244,6 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
         initPlayer()
     }
 
-    //visibility listener 구현
-    override fun onVisibilityChange(visibility: Int) {
-
-    }
-
-
     override fun onPause() {
         super.onPause()
         if (Util.SDK_INT <= 23) {
@@ -252,23 +260,12 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
 
     override fun onDestroy() {
         super.onDestroy()
+
         realm.close()
     }
 
     private fun releasePlayer() {
         player?.release()
         player = null
-    }
-
-    inner class PlayerEventListener : Player.DefaultEventListener() {
-
-        override fun onPlayerError(e: ExoPlaybackException?) {
-            e?.printStackTrace()
-        }
-
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            if (playbackState == Player.STATE_READY)
-                binding.playView.hideController()
-        }
     }
 }
