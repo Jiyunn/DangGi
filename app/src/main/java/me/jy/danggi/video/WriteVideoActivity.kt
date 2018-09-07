@@ -88,7 +88,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, PlayerControlV
             buildMediaSource(uri, "", mainHandler,null)
 
             player = ExoPlayerFactory.newSimpleInstance(this, trackSelector).apply {
-                addListener(PlayerEventListener())
+                addListener(PlayerEventListener(this@WriteVideoActivity))
                 playWhenReady = true
                 prepare(videoSource)
             }
