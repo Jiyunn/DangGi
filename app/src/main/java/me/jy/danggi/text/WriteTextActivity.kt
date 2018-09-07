@@ -43,7 +43,7 @@ class WriteTextActivity : AppCompatActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(binding.toolbarWrite)
+        setSupportActionBar(binding.toolbarWrite?.toolbarWrite)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
