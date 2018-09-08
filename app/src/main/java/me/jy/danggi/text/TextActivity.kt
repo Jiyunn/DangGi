@@ -26,6 +26,7 @@ class TextActivity : AppCompatActivity() {
     private val realm = Realm.getDefaultInstance()
     private val disposables = CompositeDisposable()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,11 +54,13 @@ class TextActivity : AppCompatActivity() {
             adapter = TextAdapter(realm.where<Memo>()
                     .sort(Memo::writeDate.name, Sort.DESCENDING).findAll(), true).apply {
 
-                disposables.addAll(clickSubject.subscribe {
-                    goToWriteToEdit(it)
-                }, longClickSubject.subscribe {
-                    createDialog(it).show()
-                })
+                disposables.addAll(
+                        clickSubject.subscribe {
+                            goToWriteToEdit(it)
+                        },
+                        longClickSubject.subscribe {
+                            createDialog(it).show()
+                        })
             }
         }
     }
@@ -110,16 +113,16 @@ class TextActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
-            R.id.menu_video -> {
-                Intent(this, VideoActivity::class.java).run {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    startActivity(this)
+            when (item.itemId) {
+                R.id.menu_video -> {
+                    Intent(this, VideoActivity::class.java).run {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        startActivity(this)
+                    }
+                    true
                 }
-                 true
+                else -> false
             }
-            else -> false
-        }
 
 
     override fun onDestroy() {

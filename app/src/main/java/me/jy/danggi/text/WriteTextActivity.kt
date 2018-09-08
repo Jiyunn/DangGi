@@ -18,9 +18,10 @@ import android.view.MenuItem
 class WriteTextActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWriteTextBinding
+
     private val realm = Realm.getDefaultInstance()
 
-    private var oldId: Int = 0
+    private var oldId: String?=null //oldId 라는 변수 자체가 직관적이지 못함.
     private var oldContent: String? = null
 
 
@@ -32,10 +33,13 @@ class WriteTextActivity : AppCompatActivity() {
 
         initToolbar()
 
+        /**
+        인텐트 검사. 수정모드일 경우 인텐트로 부터 -1이 아닌 아이디가 도착함.
+         */
         intent?.let {
-            oldId = it.getIntExtra("itemId", -1)
+            oldId = it.getStringExtra("itemId")
 
-            if (oldId != -1) {
+            if (oldId !=null) {
                 oldContent = DataHelper.findMemoById(realm, oldId).content
                 binding.editMemo.setText(oldContent)
             }
@@ -60,6 +64,7 @@ class WriteTextActivity : AppCompatActivity() {
 
             Intent(this, NormalWidget::class.java).apply {
                 action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+
                 putIntegerArrayListExtra("widgetIds", widgetIds)
                 sendBroadcast(this)
             }
@@ -77,7 +82,7 @@ class WriteTextActivity : AppCompatActivity() {
                 //아무것도 입력하지 않고 확인메뉴를 누른경우.
                 onBackPressed()
             }
-            if (oldId != -1) { //수정모드
+            if (oldId!=null) { //수정모드
                 DataHelper.updateMemoAsync(realm, oldId, content)
                 Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show()
                 sendBroadcastToWidget() //브로드캐스트 전송
