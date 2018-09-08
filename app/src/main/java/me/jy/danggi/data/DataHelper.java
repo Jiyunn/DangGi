@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -15,7 +16,7 @@ import io.realm.RealmResults;
  * Created by JY on 2018-04-01.
  */
 
-public class DataHelper{
+public class DataHelper {
 
     /**
      * get Memo find by Id
@@ -24,8 +25,8 @@ public class DataHelper{
      * @param id    Memo primary key
      * @return Memo
      */
-    public static Memo findMemoById( Realm realm , final int id ) {
-        return realm.where(Memo.class).equalTo("id" , id).findFirst();
+    public static Memo findMemoById(Realm realm, final String id) {
+        return realm.where(Memo.class).equalTo("id", id).findFirst();
     }
 
     /**
@@ -35,8 +36,8 @@ public class DataHelper{
      * @param id    Video primary key
      * @return Video
      */
-    public static Video findVideoById( Realm realm , final int id ) {
-        return realm.where(Video.class).equalTo("id" , id).findFirst();
+    public static Video findVideoById(Realm realm, final String id) {
+        return realm.where(Video.class).equalTo("id", id).findFirst();
     }
 
     /**
@@ -46,8 +47,8 @@ public class DataHelper{
      * @param widgetId Widget Id
      * @return Memo
      */
-    public static Memo findMemoByWidgetId( Realm realm , final int widgetId ) {
-        return realm.where(Widget.class).equalTo("widgetId" , widgetId).findFirst().getMemo();
+    public static Memo findMemoByWidgetId(Realm realm, final int widgetId) {
+        return realm.where(Widget.class).equalTo("widgetId", widgetId).findFirst().getMemo();
     }
 
     /**
@@ -56,14 +57,11 @@ public class DataHelper{
      * @param realm   Realm
      * @param content Memo Content
      */
-    public static void addMemoAsync( Realm realm , final String content ) {
+    public static void addMemoAsync(Realm realm, final String content) {
         realm.executeTransactionAsync(r -> {
-            Number maxId = r.where(Memo.class).max("id");
-            int id = ( maxId != null ) ? maxId.intValue() + 1 : 1;
+            Memo memo = r.createObject(Memo.class, UUID.randomUUID().toString());
 
-            Memo memo = r.createObject(Memo.class , id);
             memo.setContent(content);
-            memo.setWriteDate(new Date(System.currentTimeMillis()));
         });
     }
 
@@ -75,21 +73,20 @@ public class DataHelper{
      * @param uri     Video Uri
      * @param content Added content
      */
-    public static void addVideoAsync( Realm realm , final Bitmap bitmap , final Uri uri , final String content ) {
+    public static void addVideoAsync(Realm realm, final Bitmap bitmap, final Uri uri, final String content) {
         realm.executeTransactionAsync(r -> {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG , 100 , stream);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
             byte[] thumbnailByte = stream.toByteArray();
+
             bitmap.recycle();
 
-            Number maxId = r.where(Video.class).max("id");
-            int id = ( maxId != null ) ? maxId.intValue() + 1 : 1;
-
-            Video video = r.createObject(Video.class , id);
+            Video video = r.createObject(Video.class, UUID.randomUUID().toString());
             video.setThumbnail(thumbnailByte);
             video.setUri(uri.toString());
             video.setContent(content);
-            video.setWriteDate(new Date(System.currentTimeMillis()));
         });
     }
 
@@ -100,13 +97,14 @@ public class DataHelper{
      * @param id      Memo primary key
      * @param content Updated content
      */
-    public static void updateMemoAsync( Realm realm , final int id , final String content ) {
+    public static void updateMemoAsync(Realm realm, final String id, final String content) {
         realm.executeTransactionAsync(r -> {
-            Memo memo = r.where(Memo.class).equalTo("id" , id).findFirst();
+            Memo memo = r.where(Memo.class).equalTo("id", id).findFirst();
 
             if (memo != null) {
                 memo.setContent(content);
                 memo.setWriteDate(new Date(System.currentTimeMillis()));
+
                 r.insertOrUpdate(memo);
             }
         });
@@ -121,13 +119,13 @@ public class DataHelper{
      * @param uri     Video Uri
      * @param content Text Content
      */
-    public static void updateVideoAsync( Realm realm , final int id , final Bitmap bitmap , final Uri uri , final String content ) {
+    public static void updateVideoAsync(Realm realm, final String id, final Bitmap bitmap, final Uri uri, final String content) {
         realm.executeTransactionAsync(r -> {
-            Video video = r.where(Video.class).equalTo("id" , id).findFirst();
+            Video video = r.where(Video.class).equalTo("id", id).findFirst();
 
             if (video != null) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG , 100 , stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] thumbnailByte = stream.toByteArray();
                 bitmap.recycle();
 
@@ -145,9 +143,10 @@ public class DataHelper{
      * @param realm Realm
      * @param id    Memo primary key
      */
-    public static void deleteMemo( Realm realm , final int id ) {
+    public static void deleteMemo(Realm realm, final String id) {
         realm.executeTransactionAsync(r -> {
-            Memo memo = r.where(Memo.class).equalTo("id" , id).findFirst();
+            Memo memo = r.where(Memo.class).equalTo("id", id).findFirst();
+
             if (memo != null) {
                 memo.deleteFromRealm();
             }
@@ -160,9 +159,9 @@ public class DataHelper{
      * @param realm Realm
      * @param id    Video primary eky
      */
-    public static void deleteVideo( Realm realm , final int id ) {
+    public static void deleteVideo(Realm realm, final String id) {
         realm.executeTransactionAsync(r -> {
-            Video video = r.where(Video.class).equalTo("id" , id).findFirst();
+            Video video = r.where(Video.class).equalTo("id", id).findFirst();
             if (video != null) {
                 video.deleteFromRealm();
             }
@@ -176,9 +175,9 @@ public class DataHelper{
      * @param memoId Memo primary key
      * @return ReamResult
      */
-    public static RealmResults<Widget> findWidgetByMemoId( Realm realm , int memoId ) {
+    public static RealmResults<Widget> findWidgetByMemoId(Realm realm, String memoId) {
         return realm.where(Widget.class)
-                .equalTo("memo.id" , memoId)
+                .equalTo("memo.id", memoId)
                 .findAll();
     }
 
@@ -189,21 +188,20 @@ public class DataHelper{
      * @param widgetId Widget id
      * @param memoId   Memo primary key
      */
-    public static void saveWidget( Realm realm , final int widgetId , final int memoId ) {
+    public static void saveWidget(Realm realm, final int widgetId, final String memoId) {
         realm.executeTransactionAsync(r -> {
-            Memo memo = r.where(Memo.class).equalTo("id" , memoId).findFirst();
-            Widget widget = r.where(Widget.class).equalTo("widgetId" , widgetId).findFirst();
+            Memo memo = r.where(Memo.class).equalTo("id", memoId).findFirst();
+            Widget widget = r.where(Widget.class).equalTo("widgetId", widgetId).findFirst();
 
             if (widget != null) { //이미 등록된 위젯인 경우.
                 widget.setMemo(memo);
+
                 r.insertOrUpdate(widget);
             } else { //새로운 위젯을 등록하는 경우
-                Number maxId = r.where(Widget.class).max("id");
-                int id = ( maxId != null ) ? maxId.intValue() + 1 : 1;
-
-                Widget createdWidget = r.createObject(Widget.class , id);
+                Widget createdWidget = r.createObject(Widget.class, UUID.randomUUID().toString());
                 createdWidget.setWidgetId(widgetId);
                 createdWidget.setMemo(memo);
+
                 r.insertOrUpdate(createdWidget);
             }
         });
@@ -215,9 +213,10 @@ public class DataHelper{
      * @param realm    Realm
      * @param widgetId id
      */
-    public static void deleteWidgetAsync( Realm realm , final int widgetId ) {
+    public static void deleteWidgetAsync(Realm realm, final int widgetId) {
         realm.executeTransactionAsync(r -> {
-            Widget widget = r.where(Widget.class).equalTo("widgetId" , widgetId).findFirst();
+            Widget widget = r.where(Widget.class).equalTo("widgetId", widgetId).findFirst();
+
             if (widget != null) {
                 widget.deleteFromRealm();
             }
