@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        plugin_version='3.1.2'
+        plugin_version='3.1.4'
         support_version='27.1.1'
         kotlin_version = '1.2.61'
         constraint_version='1.1.3'
