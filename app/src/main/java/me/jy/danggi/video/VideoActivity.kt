@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +17,7 @@ import io.realm.Realm
 import io.realm.Sort
 import me.jy.danggi.BR
 import me.jy.danggi.R
+import me.jy.danggi.common.rx.RxBus
 import me.jy.danggi.data.DataHelper
 import me.jy.danggi.data.Video
 import me.jy.danggi.databinding.ActivityVideoBinding
@@ -28,6 +30,8 @@ class VideoActivity : AppCompatActivity() {
 
     private val realm = Realm.getDefaultInstance()
     private var adapter: VideoAdapter? = null
+
+    private val rxBus = RxBus.getInstance()
     private var disposables = CompositeDisposable()
 
 
@@ -68,8 +72,9 @@ class VideoActivity : AppCompatActivity() {
     }
 
     private fun goToWriteVideo(item: Video) {
+        rxBus.takeBus(item)
+
         Intent(this, WriteVideoActivity::class.java).apply {
-            putExtra("itemId", item.id)
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(this)
         }

@@ -9,10 +9,16 @@ import me.jy.danggi.databinding.ActivityWriteTextBinding
 import android.appwidget.AppWidgetManager
 import me.jy.danggi.common.provider.NormalWidget
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.widget.Toast
 import me.jy.danggi.R
 import android.view.MenuItem
+import io.reactivex.disposables.CompositeDisposable
+
+
+import me.jy.danggi.common.rx.RxBus
+import me.jy.danggi.data.Memo
 
 
 class WriteTextActivity : AppCompatActivity() {
@@ -21,8 +27,9 @@ class WriteTextActivity : AppCompatActivity() {
 
     private val realm = Realm.getDefaultInstance()
 
-    private var oldId: String?=null //oldId 라는 변수 자체가 직관적이지 못함.
-    private var oldContent: String? = null
+    private var editedMemo: Memo? = null
+    private val rxBus = RxBus.getInstance()
+    private val disposables = CompositeDisposable()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,17 +40,22 @@ class WriteTextActivity : AppCompatActivity() {
 
         initToolbar()
 
-        /**
-        인텐트 검사. 수정모드일 경우 인텐트로 부터 -1이 아닌 아이디가 도착함.
-         */
-        intent?.let {
-            oldId = it.getStringExtra("itemId")
+        checkEditModeOrNot()
+    }
 
-            if (oldId !=null) {
-                oldContent = DataHelper.findMemoById(realm, oldId).content
-                binding.editMemo.setText(oldContent)
-            }
-        }
+    /**
+     * check RxBus.
+     */
+    private fun checkEditModeOrNot() {
+        disposables.add(rxBus.toObservable()
+                .doOnError { e -> e.printStackTrace() }
+                .filter { data -> data is Memo }
+                .map { data -> data as Memo }
+                .subscribe {
+                    editedMemo = it
+
+                    binding.editMemo.setText(it.content)
+                })
     }
 
     private fun initToolbar() {
@@ -54,8 +66,8 @@ class WriteTextActivity : AppCompatActivity() {
     /**
      * 변경된 데이터를 위젯에게 브로드캐스트보냄.
      */
-    private fun sendBroadcastToWidget() {
-        DataHelper.findWidgetByMemoId(realm, oldId)?.let {
+    private fun sendBroadcastToWidget(id: String) {
+        DataHelper.findWidgetByMemoId(realm, id)?.let {
             val widgetIds = arrayListOf<Int>()
 
             for (w in it) {
@@ -72,51 +84,65 @@ class WriteTextActivity : AppCompatActivity() {
     }
 
 
-        /**
-         * 입력한 메모를 update / insert 할 것인지 정하는 메소드.
-         */
-        private fun saveMemo() {
-            val content = binding.editMemo.text.toString() //사용자가 입력한 문자
+    /**
+     * 입력한 메모를 update / insert 할 것인지 정하는 메소드.
+     */
+    private fun saveMemo() {
+        val content = binding.editMemo.text.toString() //사용자가 입력한 문자
 
-            if (content.isNotEmpty() || content == oldContent) {
-                //아무것도 입력하지 않고 확인메뉴를 누른경우.
+        if (editedMemo == null) { //등록모드
+            DataHelper.addMemoAsync(realm, content)
+            Toast.makeText(this, getString(R.string.save_complete), Toast.LENGTH_SHORT).show()
+        }
+
+        //수정모드
+        editedMemo?.let {
+            if (content == it.content) { //
                 onBackPressed()
             }
-            if (oldId!=null) { //수정모드
-                DataHelper.updateMemoAsync(realm, oldId, content)
-                Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show()
-                sendBroadcastToWidget() //브로드캐스트 전송
-            } else { //등록모드
-                DataHelper.addMemoAsync(realm, content)
-                Toast.makeText(this, getString(R.string.save_complete), Toast.LENGTH_SHORT).show()
-            }
+
+            DataHelper.updateMemoAsync(realm, it.id, content)
+            Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show()
+            sendBroadcastToWidget(it.id) //브로드캐스트 전송
         }
-
-        override fun onCreateOptionsMenu(menu: Menu): Boolean {
-            val inflater = menuInflater
-            inflater.inflate(R.menu.menu_write, menu)
-            return true
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean =
-                when (item.itemId) {
-                    R.id.menu_check -> {
-                        saveMemo()
-                        onBackPressed()
-                        true
-                    }
-                    android.R.id.home -> {
-                        onBackPressed()
-                        true
-                    }
-                    else -> false
-                }
-
-
-        override fun onDestroy() {
-            super.onDestroy()
-
-            realm.close()
-        }
-
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_write, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+            when (item.itemId) {
+                R.id.menu_check -> {
+                    saveMemo()
+
+                    Intent(this, TextActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        startActivity(this)
+                        finish()
+
+                    }
+                    true
+                }
+                android.R.id.home -> {
+                    Intent(this, TextActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        startActivity(this)
+                        finish()
+                    }
+                    true
+                }
+                else -> false
+            }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        realm.close()
+
+        rxBus.shutdownBus()
+        disposables.dispose()
+    }
+}
