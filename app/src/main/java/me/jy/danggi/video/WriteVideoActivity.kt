@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.TextureView
@@ -35,13 +36,16 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.tedpark.tedpermission.rx2.TedRx2Permission
+import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
 import me.jy.danggi.BR
 import me.jy.danggi.MyApplication
 import me.jy.danggi.R
 import me.jy.danggi.common.player.MemoPlayer
 import me.jy.danggi.common.player.PlayerEventListener
+import me.jy.danggi.common.rx.RxBus
 import me.jy.danggi.data.DataHelper
+import me.jy.danggi.data.Video
 import me.jy.danggi.databinding.ActivityWriteVideoBinding
 
 
@@ -55,16 +59,20 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
     private val bandwidthMeter: DefaultBandwidthMeter = DefaultBandwidthMeter()
     private val realm: Realm = Realm.getDefaultInstance()
 
-
     private var uri: Uri? = null
     private var player: SimpleExoPlayer? = null
 
-    private var oldId: String?=null
+    private val rxBus = RxBus.getInstance()
+    private val disposables = CompositeDisposable()
+
+    private var editedVideo: Video? = null
+
     private val video: Int = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         mediaDataSourceFactory = buildDataSourceFactory(true)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_write_video)
@@ -73,15 +81,25 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
 
         initToolbar()
 
-        intent.extras?.let {
-            //수정하는 경우 컨텐츠 정보들 가져옴
-            oldId = intent.getStringExtra("itemId")
+        checkEditModeOrNot()
+    }
 
-            val video = DataHelper.findVideoById(realm, oldId)
-            uri = Uri.parse(video?.uri)
-            binding.editVideoMemo.setText(video?.content)
-            initPlayer()
-        }
+    /**
+     * check RxBus.
+     */
+    private fun checkEditModeOrNot() {
+        disposables.add(rxBus.toObservable()
+                .doOnError { e -> e.printStackTrace() }
+                .filter { data -> data is Video }
+                .map { data -> data as Video }
+                .subscribe {
+                    editedVideo = it
+
+                    uri = Uri.parse(it.uri)
+
+                    binding.editVideoMemo.setText(it.content)
+                    initPlayer()
+                })
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -167,13 +185,17 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
         val textureView: TextureView? = binding.playView.videoSurfaceView as? TextureView
         val bitmap: Bitmap? = textureView?.bitmap //썸네일
 
-        if (oldId!=null) { //수정하는 경우
-            DataHelper.updateVideoAsync(realm, oldId, bitmap, uri, content)
-            Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show()
-        } else {
+
+        if (editedVideo == null) {
             DataHelper.addVideoAsync(Realm.getDefaultInstance(), bitmap, uri, content)
             Toast.makeText(this, getString(R.string.save_complete), Toast.LENGTH_SHORT).show()
         }
+
+        editedVideo?.let {
+            DataHelper.updateVideoAsync(realm, it.id, bitmap, uri, content)
+            Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -232,10 +254,21 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
             R.id.menu_check -> {
                 uri?.let {
                     saveMemo()
-                    onBackPressed()
+
+                    Intent(this, VideoActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        startActivity(this)
+                        finish()
+                    }
                 }
             }
-            android.R.id.home -> onBackPressed()
+            android.R.id.home -> {
+                Intent(this, VideoActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(this)
+                    finish()
+                }
+            }
         }
         return false
     }
@@ -247,6 +280,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
 
     override fun onPause() {
         super.onPause()
+
         if (Util.SDK_INT <= 23) {
             releasePlayer()
         }
@@ -254,6 +288,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
 
     override fun onStop() {
         super.onStop()
+
         if (Util.SDK_INT > 23) {
             releasePlayer()
         }
@@ -263,6 +298,9 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
         super.onDestroy()
 
         realm.close()
+
+        rxBus.shutdownBus()
+        disposables.dispose()
     }
 
     private fun releasePlayer() {

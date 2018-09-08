@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import io.reactivex.disposables.CompositeDisposable
@@ -13,6 +14,7 @@ import io.realm.Realm
 import io.realm.Sort
 import io.realm.kotlin.where
 import me.jy.danggi.R
+import me.jy.danggi.common.rx.RxBus
 import me.jy.danggi.data.DataHelper
 import me.jy.danggi.data.Memo
 import me.jy.danggi.databinding.ActivityTextBinding
@@ -23,8 +25,10 @@ class TextActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTextBinding
 
-    private val realm = Realm.getDefaultInstance()
+    private val rxBus = RxBus.getInstance()
     private val disposables = CompositeDisposable()
+
+    private val realm = Realm.getDefaultInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,12 +98,11 @@ class TextActivity : AppCompatActivity() {
      * Go to writeTextActivity
      */
     private fun goToWriteToEdit(item: Memo) {
-        Intent(this, WriteTextActivity::class.java).run {
-            putExtra("itemId", item.id)
+        rxBus.takeBus(item)
 
-            startActivity(this)
-        }
+        startActivity(Intent(this, WriteTextActivity::class.java))
     }
+
 
     fun onFABClick() { //플로팅버튼클릭
         startActivity(Intent(this, WriteTextActivity::class.java))
@@ -129,6 +132,7 @@ class TextActivity : AppCompatActivity() {
         super.onDestroy()
 
         binding.recyclerText.adapter = null
+
         realm.close()
         disposables.dispose()
     }
