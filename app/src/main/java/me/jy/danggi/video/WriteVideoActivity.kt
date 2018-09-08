@@ -59,7 +59,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
     private var uri: Uri? = null
     private var player: SimpleExoPlayer? = null
 
-    private var oldId: Int = -1
+    private var oldId: String?=null
     private val video: Int = 1
 
 
@@ -75,7 +75,8 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
 
         intent.extras?.let {
             //수정하는 경우 컨텐츠 정보들 가져옴
-            oldId = intent.getIntExtra("itemId", -1)
+            oldId = intent.getStringExtra("itemId")
+
             val video = DataHelper.findVideoById(realm, oldId)
             uri = Uri.parse(video?.uri)
             binding.editVideoMemo.setText(video?.content)
@@ -166,7 +167,7 @@ class WriteVideoActivity : AppCompatActivity(), PlaybackPreparer, MemoPlayer {
         val textureView: TextureView? = binding.playView.videoSurfaceView as? TextureView
         val bitmap: Bitmap? = textureView?.bitmap //썸네일
 
-        if (oldId != -1) { //수정하는 경우
+        if (oldId!=null) { //수정하는 경우
             DataHelper.updateVideoAsync(realm, oldId, bitmap, uri, content)
             Toast.makeText(this, getString(R.string.edit_complete), Toast.LENGTH_SHORT).show()
         } else {

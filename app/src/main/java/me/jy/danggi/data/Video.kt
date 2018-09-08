@@ -4,13 +4,16 @@ import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.util.*
 
-open class Video : RealmObject() {
+open class Video(
+        @PrimaryKey
+        var id: String = UUID.randomUUID().toString(),
 
-    @PrimaryKey
-    var id:Int =0
+        var thumbnail: ByteArray? = null,
 
-    var thumbnail:ByteArray?=null
-    var uri: String=""
-    var content:String=""
-    var writeDate: Date?=null
-}
+        var uri: String = "",
+
+        var content: String = "",
+
+        var writeDate: Date? = Date()
+
+) : RealmObject()

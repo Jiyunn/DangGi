@@ -2,12 +2,14 @@ package me.jy.danggi.data
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import java.util.*
 
-open class Widget : RealmObject(){
+open class Widget(
+        @PrimaryKey
+        var id: String = UUID.randomUUID().toString(),
 
-    @PrimaryKey
-    var id:Int=0
-    var widgetId:Int=0
+        var widgetId: Int = 0,
 
-    var memo: Memo?=null
-}
+        var memo: Memo? = null
+
+) : RealmObject()

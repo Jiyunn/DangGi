@@ -7,14 +7,12 @@ import io.realm.annotations.PrimaryKey
 import java.io.Serializable
 import java.util.*
 
-open class Memo : RealmObject(), Serializable {
+open class Memo(
+        @PrimaryKey
+        var id: String = UUID.randomUUID().toString(),
 
-    @PrimaryKey
-    var id: Int= 0
-    var content: String = ""
-    var writeDate: Date? = null
+        var content: String = "",
 
-    @LinkingObjects("memo")
-    val widgets: RealmResults<Widget>?=null
+        var writeDate: Date = Date()
 
-}
+) : RealmObject(), Serializable
